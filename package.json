@@ -1,0 +1,25 @@
+{
+  "name": "nonogram",
+  "version": "1.0.0",
+  "description": "a nonagram puzzle website",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cedwards036/nonogram.git"
+  },
+  "keywords": [
+    "nonogram"
+  ],
+  "author": "Christopher Edwards",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/cedwards036/nonogram/issues"
+  },
+  "homepage": "https://github.com/cedwards036/nonogram#readme",
+  "devDependencies": {
+    "mocha": "^7.1.1"
+  }
+}
