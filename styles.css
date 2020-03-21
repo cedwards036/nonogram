@@ -4,8 +4,16 @@
     height: 50px;
 }
 
+.empty-cell {
+    background-color: #FFFFFF;
+}
+
 .filled-cell {
-    background-color: black;
+    background-color: #000000;
+}
+
+.blank-cell {
+    background-color: #B6B6B6;
 }
 
 .row {

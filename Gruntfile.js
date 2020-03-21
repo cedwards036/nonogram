@@ -30,7 +30,7 @@ module.exports = function(grunt) {
           dest: 'build/<%= pkg.name %>.min.js'
         }
       },
-      clean: ['dist']
+      clean: ['temp']
     });
   
     // Load the plugin that provides the "uglify" task.
