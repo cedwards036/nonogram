@@ -1,3 +1,50 @@
+#game {
+    display: flex;
+    flex-direction: column;
+}
+
+.game-row {
+    display: flex;
+    flex-direction: row;
+}
+
+#blankPlaceholder {
+    width: 50px;
+    height: 50px;
+}
+
+#rowCounts {
+    display: flex;
+    flex-direction: column;
+}
+
+#colCounts {
+    display: flex;
+    flex-direction: row;
+}
+
+#colCounts .counts-col {
+    border-right: 1px solid black;
+    border-left: 1px solid black;
+}
+
+#rowCounts .counts-col {
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
+}
+
+.count {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 50px;
+    height: 50px;
+}
+
+.row {
+    display: flex
+}
+
 .cell {
     border: 1px solid black;
     width: 50px;
@@ -14,8 +61,4 @@
 
 .blank-cell {
     background-color: #B6B6B6;
-}
-
-.row {
-    display: flex
 }

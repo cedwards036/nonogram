@@ -1,10 +1,10 @@
-const generateCreationBoard = require('./board.js').generateCreationBoard
+const generateCreationGame = require('./board.js').generateCreationGame
 const interactWithCell = require('./board.js').interactWithCell
 const STATES = require('./board.js').STATES
 const MESSAGES = require('./board.js').MESSAGES
 
-const board = generateCreationBoard(5, 5);
-renderBoard(board);
+const game = generateCreationGame(5, 5);
+renderGame(game);
 
 Array.from(document.getElementsByClassName('cell')).forEach(cell => {
     cell.addEventListener('click', () => {
@@ -19,15 +19,29 @@ Array.from(document.getElementsByClassName('cell')).forEach(cell => {
     });
 }); 
 
-function renderBoard(board) {
+function renderGame(game) {
+    renderCellGrid(game);
+    renderRowCounts(game);
+    renderColCounts(game);
+}
+
+function renderCellGrid(game) {
     const grid = document.getElementById('cellGrid');
-    for (let i = 0; i < board.length; i++) {
+    for (let i = 0; i < game.board.length; i++) {
         const row = createEmptyRow();
-        for (let j = 0; j < board[i].length; j++) {
-            row.appendChild(createCell(board, i, j));
+        for (let j = 0; j < game.board[i].length; j++) {
+            row.appendChild(createCell(game.board, i, j));
         }
         grid.appendChild(row);
     }
+}
+
+function renderRowCounts(game) {
+    createCountsCollection(game.rowCounts, document.getElementById('rowCounts'));
+}
+
+function renderColCounts(game) {
+    createCountsCollection(game.colCounts, document.getElementById('colCounts'));
 }
 
 function createEmptyRow() {
@@ -62,6 +76,31 @@ function updateCellStateClass(cell, stateClass) {
 function handleCellClick(cell, message) {
     const rowIdx = cell.getAttribute('rowIdx');
     const colIdx = cell.getAttribute('colIdx');
-    interactWithCell(message, rowIdx, colIdx, board);
-    updateCellStateClass(cell, getCellClass(board[rowIdx][colIdx]));
+    interactWithCell(message, rowIdx, colIdx, game);
+    updateCellStateClass(cell, getCellClass(game.board[rowIdx][colIdx]));
+}
+
+function createCountsCollection(counts, parentDiv) {
+    counts.forEach(countNode => {
+        parentDiv.appendChild(createCountsColumn(countNode));
+    });
+    return parentDiv;
+}
+
+function createCountsColumn(headCountNode) {
+    const countsCol = document.createElement('div');
+    countsCol.setAttribute('class', 'counts-col');
+    var curNode = headCountNode;
+    while (curNode !== null) {
+        countsCol.appendChild(createCountDiv(curNode));
+        curNode = curNode.next;
+    }
+    return countsCol;
+}
+
+function createCountDiv(countNode) {
+    const count = document.createElement('div');
+    count.textContent = countNode.count;
+    count.setAttribute('class', 'count');
+    return count;
 }

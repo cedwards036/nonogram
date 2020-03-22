@@ -11,6 +11,18 @@ const MESSAGES = {
 
 const finiteStateMachine = buildFSM();
 
+function generateCreationGame(m, n) {
+    const game = {rowCounts: [], colCounts: []};
+    for (let i = 0; i < m; i++) {
+        game.rowCounts.push({count: 0, next: null})
+    }
+    for (let i = 0; i < n; i++) {
+        game.colCounts.push({count: 0, next: null})
+    }
+    game.board = generateCreationBoard(m, n);
+    return game;
+}
+
 function generateCreationBoard(m, n) {
     if (m === 0 || n === 0) {
         return [];
@@ -43,13 +55,14 @@ function buildFSM() {
     return finiteStateMachine;
 }
 
-function interactWithCell(msg, rowIdx, colIdx, board) {
-    const currentCellState = board[rowIdx][colIdx];
-    board[rowIdx][colIdx] = finiteStateMachine[currentCellState][msg];
-    return board;
+function interactWithCell(msg, rowIdx, colIdx, game) {
+    const currentCellState = game.board[rowIdx][colIdx];
+    game.board[rowIdx][colIdx] = finiteStateMachine[currentCellState][msg];
+    return game;
 }
 
 module.exports = {
+    generateCreationGame: generateCreationGame,
     generateCreationBoard: generateCreationBoard,
     interactWithCell: interactWithCell,
     STATES: STATES,
