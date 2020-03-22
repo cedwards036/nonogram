@@ -2,27 +2,20 @@ const assert = require('assert');
 const generateCreationBoard = require('../src/board.js').generateCreationBoard;
 const generateCreationGame = require('../src/board.js').generateCreationGame;
 const interactWithCell = require('../src/board.js').interactWithCell;
+const updateColumnCounts = require('../src/board.js').updateColumnCounts;
+const updateRowCounts = require('../src/board.js').updateRowCounts;
 const STATES = require('../src/board.js').STATES;
 const MESSAGES = require('../src/board.js').MESSAGES;
 
 describe('generateCreationGame', () => {
     it('should create a rowCounts array containing m 0 count nodes', () => {
         const game = generateCreationGame(3, 4);
-        assert.deepEqual([
-            {count: 0, next: null},
-            {count: 0, next: null},
-            {count: 0, next: null}
-        ], game.rowCounts); 
+        assert.deepEqual([[0], [0], [0]], game.rowCounts); 
     });
 
     it('should create a colCounts array containing n 0 count nodes', () => {
         const game = generateCreationGame(3, 4);
-        assert.deepEqual([
-            {count: 0, next: null},
-            {count: 0, next: null},
-            {count: 0, next: null},
-            {count: 0, next: null}
-        ], game.colCounts); 
+        assert.deepEqual([[0], [0], [0], [0]], game.colCounts); 
     });
 
     it('should create an m x n game board', () => {
@@ -46,6 +39,62 @@ describe('generateCreationBoard', () => {
             [STATES.EMPTY, STATES.EMPTY],
             [STATES.EMPTY, STATES.EMPTY]
         ], generateCreationBoard(2, 2));
+    });
+});
+
+describe('updateColumnCounts', () => {
+    var game;
+    beforeEach(() => {
+        game = generateCreationGame(6, 6);
+    });
+
+    it('should update to 0 if nothing is filled in the line', () => {
+        game = updateColumnCounts(game, 0);
+        assert.deepEqual([0], game.colCounts[0]);
+    });  
+
+    it('should contain a single number when there is one contiguous filled stretch', () => {
+        game = interactWithCell(MESSAGES.FILL, 0, 0, game);
+        game = interactWithCell(MESSAGES.FILL, 1, 0, game);
+        game = updateColumnCounts(game, 0);
+        assert.deepEqual([2], game.colCounts[0]);
+    }); 
+
+    it('should contain counts of contiguous filled stretches in order', () => {
+        game = interactWithCell(MESSAGES.FILL, 0, 3, game);
+        game = interactWithCell(MESSAGES.FILL, 2, 3, game);
+        game = interactWithCell(MESSAGES.FILL, 3, 3, game);
+        game = interactWithCell(MESSAGES.FILL, 5, 3, game);
+        game = updateColumnCounts(game, 3);
+        assert.deepEqual([1, 2, 1], game.colCounts[3]);
+    });
+});
+
+describe('updateRowCounts', () => {
+    var game;
+    beforeEach(() => {
+        game = generateCreationGame(6, 6);
+    });
+
+    it('should update to 0 if nothing is filled in the line', () => {
+        game = updateRowCounts(game, 0);
+        assert.deepEqual([0], game.rowCounts[0]);
+    });  
+
+    it('should contain a single number when there is one contiguous filled stretch', () => {
+        game = interactWithCell(MESSAGES.FILL, 0, 0, game);
+        game = interactWithCell(MESSAGES.FILL, 0, 1, game);
+        game = updateRowCounts(game, 0);
+        assert.deepEqual([2], game.rowCounts[0]);
+    }); 
+
+    it('should contain counts of contiguous filled stretches in order', () => {
+        game = interactWithCell(MESSAGES.FILL, 3, 0, game);
+        game = interactWithCell(MESSAGES.FILL, 3, 2, game);
+        game = interactWithCell(MESSAGES.FILL, 3, 3, game);
+        game = interactWithCell(MESSAGES.FILL, 3, 5, game);
+        game = updateRowCounts(game, 3);
+        assert.deepEqual([1, 2, 1], game.rowCounts[3]);
     });
 });
 

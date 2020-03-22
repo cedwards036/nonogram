@@ -14,10 +14,10 @@ const finiteStateMachine = buildFSM();
 function generateCreationGame(m, n) {
     const game = {rowCounts: [], colCounts: []};
     for (let i = 0; i < m; i++) {
-        game.rowCounts.push({count: 0, next: null})
+        game.rowCounts.push([0])
     }
     for (let i = 0; i < n; i++) {
-        game.colCounts.push({count: 0, next: null})
+        game.colCounts.push([0])
     }
     game.board = generateCreationBoard(m, n);
     return game;
@@ -61,10 +61,58 @@ function interactWithCell(msg, rowIdx, colIdx, game) {
     return game;
 }
 
+function updateColumnCounts(game, colIdx) {
+    const columnCounts = [];
+    let i = 0;
+    var curCount = 0;
+    while (i < game.board.length) {
+        while (i < game.board.length && game.board[i][colIdx] === STATES.FILLED) {
+            curCount++;
+            i++;
+        }
+        if (curCount > 0) {
+            columnCounts.push(curCount);
+            curCount = 0;
+        }
+        i++;
+    }
+    if (columnCounts.length === 0) {
+        game.colCounts[colIdx] = [0];
+    } else {
+        game.colCounts[colIdx] = columnCounts;
+    }
+    return game;
+}
+
+function updateRowCounts(game, rowIdx) {
+    const rowCounts = [];
+    let i = 0;
+    var curCount = 0;
+    while (i < game.board[0].length) {
+        while (i < game.board[0].length && game.board[rowIdx][i] === STATES.FILLED) {
+            curCount++;
+            i++;
+        }
+        if (curCount > 0) {
+            rowCounts.push(curCount);
+            curCount = 0;
+        }
+        i++;
+    }
+    if (rowCounts.length === 0) {
+        game.rowCounts[rowIdx] = [0];
+    } else {
+        game.rowCounts[rowIdx] = rowCounts;
+    }
+    return game;
+}
+
 module.exports = {
     generateCreationGame: generateCreationGame,
     generateCreationBoard: generateCreationBoard,
     interactWithCell: interactWithCell,
+    updateColumnCounts: updateColumnCounts,
+    updateRowCounts: updateRowCounts,
     STATES: STATES,
     MESSAGES: MESSAGES
 }

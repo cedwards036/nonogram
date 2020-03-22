@@ -1,16 +1,7 @@
 #game {
-    display: flex;
-    flex-direction: column;
-}
-
-.game-row {
-    display: flex;
-    flex-direction: row;
-}
-
-#blankPlaceholder {
-    width: 50px;
-    height: 50px;
+    display: inline-grid;
+    grid-template-columns: auto auto;
+    grid-template-rows: auto auto;
 }
 
 #rowCounts {
@@ -26,11 +17,17 @@
 #colCounts .counts-col {
     border-right: 1px solid black;
     border-left: 1px solid black;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
 }
 
 #rowCounts .counts-col {
     border-top: 1px solid black;
     border-bottom: 1px solid black;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
 }
 
 .count {
