@@ -6,6 +6,13 @@
         <script type="text/javascript" src="build/nonogram.min.js" async></script>
     </head>
 <body>
+    <div id="dimensions">
+        <form id="dimensionsForm" method="post">
+            <input type="text" id="yDimensionInput" name="yDimensionInput">
+            <input type="text" id="xDimensionInput" name="xDimensionInput">
+            <button>Set Board Dimensions</button>
+        </form>
+    </div>
     <div id="game">
         <div id="blankPlaceholder"></div>
         <div id="colCounts"></div>

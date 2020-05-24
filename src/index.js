@@ -5,21 +5,66 @@ const updateRowCounts = require('../src/board.js').updateRowCounts;
 const STATES = require('./board.js').STATES
 const MESSAGES = require('./board.js').MESSAGES
 
-const game = generateCreationGame(5, 5);
-renderGame(game);
+const MAX_DIMENSION = 15;
+const MIN_DIMENSION = 1;
+const DEFAULT_DIMENSION = 5;
 
-Array.from(document.getElementsByClassName('cell')).forEach(cell => {
-    cell.addEventListener('click', () => {
-        handleCellClick(game, cell, MESSAGES.FILL)
-    });
-}); 
+createGame(DEFAULT_DIMENSION, DEFAULT_DIMENSION);
 
-Array.from(document.getElementsByClassName('cell')).forEach(cell => {
-    cell.addEventListener('contextmenu', (e) => {
-        handleCellClick(game, cell, MESSAGES.BLANK)
-        e.preventDefault();
-    });
-}); 
+document.getElementById('xDimensionInput').defaultValue = DEFAULT_DIMENSION;
+document.getElementById('yDimensionInput').defaultValue = DEFAULT_DIMENSION;
+document.getElementById('dimensionsForm').onsubmit = setDimensions;
+
+
+function setDimensions() {
+    const height = document.getElementById('yDimensionInput').value;
+    const width = document.getElementById('xDimensionInput').value;
+    if (isValidDimension(height, MAX_DIMENSION, MIN_DIMENSION) && 
+            isValidDimension(width, MAX_DIMENSION, MIN_DIMENSION)) {
+        clearGame();
+        createGame(height, width);
+    } else {
+        document.getElementById('yDimensionInput').value = document.getElementById('rowCounts').childElementCount;
+        document.getElementById('xDimensionInput').value = document.getElementById('colCounts').childElementCount;
+        alert('ERROR: invalid dimensions');
+    }
+    return false;
+}
+
+function isValidDimension(value, max, min) {
+    return isInt(value) && value >= min && value <= max;
+}
+
+//https://stackoverflow.com/a/1779019
+function isInt(value) {
+    return /^\d+$/.test(value);
+}
+
+
+function createGame(height, width) {
+    const newGame = generateCreationGame(height, width);
+    renderGame(newGame);
+
+    Array.from(document.getElementsByClassName('cell')).forEach(cell => {
+        cell.addEventListener('click', () => {
+            handleCellClick(newGame, cell, MESSAGES.FILL)
+        });
+    }); 
+
+    Array.from(document.getElementsByClassName('cell')).forEach(cell => {
+        cell.addEventListener('contextmenu', (e) => {
+            handleCellClick(newGame, cell, MESSAGES.BLANK)
+            e.preventDefault();
+        });
+    }); 
+    return newGame;
+}
+
+function clearGame() {
+    document.getElementById('cellGrid').innerHTML = '';
+    document.getElementById('colCounts').innerHTML = '';
+    document.getElementById('rowCounts').innerHTML = '';
+}
 
 function renderGame(game) {
     renderCellGrid(game);
@@ -87,7 +132,6 @@ function handleCellClick(game, cell, message) {
 function updateColumnCountDivs(game, colIdx) {
     updateColumnCounts(game, colIdx);
     const colCountsDiv = getNthColumnCountsCol(colIdx);
-    console.log(colCountsDiv);
     updateLineCountsColumnDiv(colCountsDiv, game.colCounts[colIdx]);
 }
 
@@ -99,7 +143,6 @@ function getNthColumnCountsCol(n) {
 function updateRowCountDivs(game, rowIdx) {
     updateRowCounts(game, rowIdx);
     const rowCountsDiv = getNthRowCountsCol(rowIdx);
-    console.log(rowCountsDiv);
     updateLineCountsColumnDiv(rowCountsDiv, game.rowCounts[rowIdx]);
 }
 

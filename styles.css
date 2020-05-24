@@ -34,8 +34,8 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 50px;
-    height: 50px;
+    width: 35px;
+    height: 35px;
 }
 
 .row {
@@ -44,8 +44,8 @@
 
 .cell {
     border: 1px solid black;
-    width: 50px;
-    height: 50px;
+    width: 35px;
+    height: 35px;
 }
 
 .empty-cell {
