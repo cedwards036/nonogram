@@ -1,7 +1,8 @@
 const generateCreationGame = require('./board.js').generateCreationGame
 const interactWithCell = require('./board.js').interactWithCell
-const updateColumnCounts = require('../src/board.js').updateColumnCounts;
-const updateRowCounts = require('../src/board.js').updateRowCounts;
+const updateColumnCounts = require('./board.js').updateColumnCounts;
+const updateRowCounts = require('./board.js').updateRowCounts;
+const makeGameURLComponent = require('./board-url.js').makeGameURLComponent;
 const STATES = require('./board.js').STATES
 const MESSAGES = require('./board.js').MESSAGES
 
@@ -9,13 +10,11 @@ const MAX_DIMENSION = 15;
 const MIN_DIMENSION = 1;
 const DEFAULT_DIMENSION = 5;
 
-createGame(DEFAULT_DIMENSION, DEFAULT_DIMENSION);
+updateGameURL(createGame(DEFAULT_DIMENSION, DEFAULT_DIMENSION));
 
 document.getElementById('xDimensionInput').defaultValue = DEFAULT_DIMENSION;
 document.getElementById('yDimensionInput').defaultValue = DEFAULT_DIMENSION;
 document.getElementById('dimensionsForm').onsubmit = setDimensions;
-
-console.log(window.location.href);
 
 function setDimensions() {
     const height = document.getElementById('yDimensionInput').value;
@@ -23,7 +22,7 @@ function setDimensions() {
     if (isValidDimension(height, MAX_DIMENSION, MIN_DIMENSION) && 
             isValidDimension(width, MAX_DIMENSION, MIN_DIMENSION)) {
         clearGame();
-        createGame(width, height);
+        updateGameURL(createGame(width, height));
     } else {
         document.getElementById('yDimensionInput').value = document.getElementById('rowCounts').childElementCount;
         document.getElementById('xDimensionInput').value = document.getElementById('colCounts').childElementCount;
@@ -128,6 +127,7 @@ function handleCellClick(game, cell, message) {
     updateColumnCountDivs(game, colIdx);
     updateRowCountDivs(game, rowIdx);
     updateCellStateClass(cell, getCellClass(game.board[rowIdx][colIdx]));
+    updateGameURL(game);
 }
 
 function updateColumnCountDivs(game, colIdx) {
@@ -184,4 +184,12 @@ function clearChildren(element) {
     while (element.firstChild) {
         element.removeChild(element.lastChild);
     }
+}
+
+function updateGameURL(game) {
+    document.getElementById('gameURL').textContent = makeGameURL(game);
+}
+
+function makeGameURL(game) {
+    return window.location.href + '/' + makeGameURLComponent(game);
 }

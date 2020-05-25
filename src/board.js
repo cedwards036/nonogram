@@ -38,6 +38,24 @@ function generateCreationBoard(m, n) {
     }
 }
 
+function makeGameFrom2DArray(arr) {
+    const game = generateCreationGame(arr[0].length, arr.length);
+    for (let i = 0; i < arr.length; i++) {
+        for (let j = 0; j < arr[0].length; j++) {
+            if (arr[i][j] === 1) {
+                interactWithCell(MESSAGES.FILL, i, j, game);
+            }
+        }
+    }
+    for (let i = 0; i < arr.length; i++) {
+        updateRowCounts(game, i);
+    }
+    for (let i = 0; i < arr[0].length; i++) {
+        updateColumnCounts(game, i);
+    }
+    return game;
+}
+
 function buildFSM() {
     function addStateTransition(finiteStateMachine, givenState, message, newState) {
         if (!finiteStateMachine.hasOwnProperty(givenState)) {
@@ -113,6 +131,7 @@ module.exports = {
     interactWithCell: interactWithCell,
     updateColumnCounts: updateColumnCounts,
     updateRowCounts: updateRowCounts,
+    makeGameFrom2DArray: makeGameFrom2DArray,
     STATES: STATES,
     MESSAGES: MESSAGES
 }
