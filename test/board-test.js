@@ -8,18 +8,18 @@ const STATES = require('../src/board.js').STATES;
 const MESSAGES = require('../src/board.js').MESSAGES;
 
 describe('generateCreationGame', () => {
-    it('should create a rowCounts array containing m 0 count nodes', () => {
+    it('should create a colCounts array containing m 0 count nodes', () => {
         const game = generateCreationGame(3, 4);
-        assert.deepEqual([[0], [0], [0]], game.rowCounts); 
+        assert.deepEqual([[0], [0], [0]], game.colCounts); 
     });
 
-    it('should create a colCounts array containing n 0 count nodes', () => {
+    it('should create a rowCounts array containing n 0 count nodes', () => {
         const game = generateCreationGame(3, 4);
-        assert.deepEqual([[0], [0], [0], [0]], game.colCounts); 
+        assert.deepEqual([[0], [0], [0], [0]], game.rowCounts); 
     });
 
     it('should create an m x n game board', () => {
-        const game = generateCreationGame(2, 1);
+        const game = generateCreationGame(1, 2);
         assert.deepEqual([[STATES.EMPTY], [STATES.EMPTY]], game.board); 
     });
 });
@@ -31,10 +31,10 @@ describe('generateCreationBoard', () => {
         assert.deepEqual([], generateCreationBoard(0, 1));
     });
 
-    it('should create an n x m grid of empty cells', () => {
+    it('should create an m x n grid of empty cells', () => {
         assert.deepEqual([[STATES.EMPTY]], generateCreationBoard(1, 1));
-        assert.deepEqual([[STATES.EMPTY, STATES.EMPTY, STATES.EMPTY]], generateCreationBoard(1, 3));
-        assert.deepEqual([[STATES.EMPTY], [STATES.EMPTY], [STATES.EMPTY]], generateCreationBoard(3, 1));
+        assert.deepEqual([[STATES.EMPTY, STATES.EMPTY, STATES.EMPTY]], generateCreationBoard(3, 1));
+        assert.deepEqual([[STATES.EMPTY], [STATES.EMPTY], [STATES.EMPTY]], generateCreationBoard(1, 3));
         assert.deepEqual([
             [STATES.EMPTY, STATES.EMPTY],
             [STATES.EMPTY, STATES.EMPTY]

@@ -13,10 +13,10 @@ const finiteStateMachine = buildFSM();
 
 function generateCreationGame(m, n) {
     const game = {rowCounts: [], colCounts: []};
-    for (let i = 0; i < m; i++) {
+    for (let i = 0; i < n; i++) {
         game.rowCounts.push([0])
     }
-    for (let i = 0; i < n; i++) {
+    for (let i = 0; i < m; i++) {
         game.colCounts.push([0])
     }
     game.board = generateCreationBoard(m, n);
@@ -28,9 +28,9 @@ function generateCreationBoard(m, n) {
         return [];
     } else {
         let board = [];
-        for (let i = 0; i < m; i++) {
+        for (let i = 0; i < n; i++) {
             board.push([]);
-            for (let j = 0; j < n; j++) {
+            for (let j = 0; j < m; j++) {
                 board[i].push(STATES.EMPTY)
             }
         }

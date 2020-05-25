@@ -15,6 +15,7 @@ document.getElementById('xDimensionInput').defaultValue = DEFAULT_DIMENSION;
 document.getElementById('yDimensionInput').defaultValue = DEFAULT_DIMENSION;
 document.getElementById('dimensionsForm').onsubmit = setDimensions;
 
+console.log(window.location.href);
 
 function setDimensions() {
     const height = document.getElementById('yDimensionInput').value;
@@ -22,7 +23,7 @@ function setDimensions() {
     if (isValidDimension(height, MAX_DIMENSION, MIN_DIMENSION) && 
             isValidDimension(width, MAX_DIMENSION, MIN_DIMENSION)) {
         clearGame();
-        createGame(height, width);
+        createGame(width, height);
     } else {
         document.getElementById('yDimensionInput').value = document.getElementById('rowCounts').childElementCount;
         document.getElementById('xDimensionInput').value = document.getElementById('colCounts').childElementCount;
