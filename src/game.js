@@ -9,7 +9,7 @@ const MESSAGES = {
     BLANK: 'blank'
 }
 
-const finiteStateMachine = buildFSM();
+const creationFSM = buildCreationFSM();
 
 function generateCreationGame(m, n) {
     const game = {rowCounts: [], colCounts: []};
@@ -56,7 +56,7 @@ function makeGameFrom2DArray(arr) {
     return game;
 }
 
-function buildFSM() {
+function buildCreationFSM() {
     function addStateTransition(finiteStateMachine, givenState, message, newState) {
         if (!finiteStateMachine.hasOwnProperty(givenState)) {
             finiteStateMachine[givenState] = {};
@@ -75,7 +75,7 @@ function buildFSM() {
 
 function interactWithCell(msg, rowIdx, colIdx, game) {
     const currentCellState = game.board[rowIdx][colIdx];
-    game.board[rowIdx][colIdx] = finiteStateMachine[currentCellState][msg];
+    game.board[rowIdx][colIdx] = creationFSM[currentCellState][msg];
     return game;
 }
 

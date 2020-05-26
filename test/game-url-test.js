@@ -1,7 +1,7 @@
 const assert = require('assert');
-const generateCreationGame = require('../src/board.js').generateCreationGame;
-const makeGameFrom2DArray = require('../src/board.js').makeGameFrom2DArray;
-const makeGameString = require('../src/board-url.js').makeGameString;
+const generateCreationGame = require('../src/game.js').generateCreationGame;
+const makeGameFrom2DArray = require('../src/game.js').makeGameFrom2DArray;
+const makeGameString = require('../src/game-url.js').makeGameString;
 
 describe('makeGameString', () => {
     it('creates a string that starts with the dimensions of the puzzle', () => {

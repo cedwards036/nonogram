@@ -1,11 +1,11 @@
 const assert = require('assert');
-const generateCreationBoard = require('../src/board.js').generateCreationBoard;
-const generateCreationGame = require('../src/board.js').generateCreationGame;
-const interactWithCell = require('../src/board.js').interactWithCell;
-const updateColumnCounts = require('../src/board.js').updateColumnCounts;
-const updateRowCounts = require('../src/board.js').updateRowCounts;
-const STATES = require('../src/board.js').STATES;
-const MESSAGES = require('../src/board.js').MESSAGES;
+const generateCreationBoard = require('../src/game.js').generateCreationBoard;
+const generateCreationGame = require('../src/game.js').generateCreationGame;
+const interactWithCell = require('../src/game.js').interactWithCell;
+const updateColumnCounts = require('../src/game.js').updateColumnCounts;
+const updateRowCounts = require('../src/game.js').updateRowCounts;
+const STATES = require('../src/game.js').STATES;
+const MESSAGES = require('../src/game.js').MESSAGES;
 
 describe('generateCreationGame', () => {
     it('should create a colCounts array containing m 0 count nodes', () => {
