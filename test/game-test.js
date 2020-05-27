@@ -1,6 +1,7 @@
 const assert = require('assert');
-const generateCreationBoard = require('../src/game.js').generateCreationBoard;
+const generateEmptyBoard = require('../src/game.js').generateEmptyBoard;
 const generateCreationGame = require('../src/game.js').generateCreationGame;
+const generateSolveGame = require('../src/game.js').generateSolveGame;
 const interactWithCell = require('../src/game.js').interactWithCell;
 const updateColumnCounts = require('../src/game.js').updateColumnCounts;
 const updateRowCounts = require('../src/game.js').updateRowCounts;
@@ -26,19 +27,19 @@ describe('generateCreationGame', () => {
 
 describe('generateCreationBoard', () => {
     it('should create an 0 x 0 grid if either n or m is zero', () => {
-        assert.deepEqual([], generateCreationBoard(0, 0));
-        assert.deepEqual([], generateCreationBoard(1, 0));
-        assert.deepEqual([], generateCreationBoard(0, 1));
+        assert.deepEqual([], generateEmptyBoard(0, 0));
+        assert.deepEqual([], generateEmptyBoard(1, 0));
+        assert.deepEqual([], generateEmptyBoard(0, 1));
     });
 
     it('should create an m x n grid of empty cells', () => {
-        assert.deepEqual([[STATES.EMPTY]], generateCreationBoard(1, 1));
-        assert.deepEqual([[STATES.EMPTY, STATES.EMPTY, STATES.EMPTY]], generateCreationBoard(3, 1));
-        assert.deepEqual([[STATES.EMPTY], [STATES.EMPTY], [STATES.EMPTY]], generateCreationBoard(1, 3));
+        assert.deepEqual([[STATES.EMPTY]], generateEmptyBoard(1, 1));
+        assert.deepEqual([[STATES.EMPTY, STATES.EMPTY, STATES.EMPTY]], generateEmptyBoard(3, 1));
+        assert.deepEqual([[STATES.EMPTY], [STATES.EMPTY], [STATES.EMPTY]], generateEmptyBoard(1, 3));
         assert.deepEqual([
             [STATES.EMPTY, STATES.EMPTY],
             [STATES.EMPTY, STATES.EMPTY]
-        ], generateCreationBoard(2, 2));
+        ], generateEmptyBoard(2, 2));
     });
 });
 
@@ -130,5 +131,18 @@ describe('interactWithCell', () => {
     it('should be empty when sent the "fill" message while blank', () => {
         game = interactWithCell(MESSAGES.BLANK, 0, 0, game);
         assert.equal(STATES.EMPTY, interactWithCell(MESSAGES.FILL, 0, 0, game).board[0][0]);
+    });
+});
+
+describe('generateSolveGame', () => {
+    it('should create an empty game with column counts and row counts derived from the input', () => {
+        const rowCounts = [[1, 1], [3], [2]];
+        const colCounts = [[0], [2], [1]];
+        const expected = {rowCounts: rowCounts, colCounts: colCounts, board: [
+            [STATES.EMPTY, STATES.EMPTY, STATES.EMPTY],
+            [STATES.EMPTY, STATES.EMPTY, STATES.EMPTY,],
+            [STATES.EMPTY, STATES.EMPTY, STATES.EMPTY,]
+        ]};
+        assert.deepEqual(expected, generateSolveGame(rowCounts, colCounts));
     });
 });

@@ -11,6 +11,11 @@ const MESSAGES = {
 
 const creationFSM = buildCreationFSM();
 
+function generateSolveGame(rowCounts, colCounts) {
+    const board = generateEmptyBoard(rowCounts.length, colCounts.length);
+    return {rowCounts: rowCounts, colCounts: colCounts, board: board};
+}
+
 function generateCreationGame(m, n) {
     const game = {rowCounts: [], colCounts: []};
     for (let i = 0; i < n; i++) {
@@ -19,11 +24,11 @@ function generateCreationGame(m, n) {
     for (let i = 0; i < m; i++) {
         game.colCounts.push([0])
     }
-    game.board = generateCreationBoard(m, n);
+    game.board = generateEmptyBoard(m, n);
     return game;
 }
 
-function generateCreationBoard(m, n) {
+function generateEmptyBoard(m, n) {
     if (m === 0 || n === 0) {
         return [];
     } else {
@@ -126,8 +131,9 @@ function updateRowCounts(game, rowIdx) {
 }
 
 module.exports = {
+    generateSolveGame: generateSolveGame,
     generateCreationGame: generateCreationGame,
-    generateCreationBoard: generateCreationBoard,
+    generateEmptyBoard: generateEmptyBoard,
     interactWithCell: interactWithCell,
     updateColumnCounts: updateColumnCounts,
     updateRowCounts: updateRowCounts,
