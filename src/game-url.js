@@ -1,19 +1,47 @@
+const generateSolveGame = require('./game.js').generateSolveGame;
+
 function makeGameString(game) {
-    const dimensions = game.colCounts.length + 'x' + game.rowCounts.length;
     const rowCounts = game.rowCounts.map((rowCount) => {
         return rowCount.join(',');
     }).join(';');
     const colCounts = game.colCounts.map((colCount) => {
         return colCount.join(',');
     }).join(';');
-    return dimensions + '#' + rowCounts + '#' + colCounts;
+    return rowCounts + '#' + colCounts;
 }
 
-function makeGameURLComponent(game) {
+function makeGameURLQueryString(game) {
     return btoa(makeGameString(game));
+}
+
+function decodeGameURLQueryString(queryString) {
+    return atob(queryString);
+}
+
+function parseGameString(gameString) {
+    function parseCounts(countsStr) {
+        return countsStr.split(';').map(s => s.split(',').map(s => parseInt(s)));
+    }
+    const split = gameString.split('#');
+    const rowCounts = parseCounts(split[0]);
+    const colCounts = parseCounts(split[1]);
+    return {rowCounts: rowCounts, colCounts: colCounts};
+
+}
+
+function buildGameFromGameString(gameString) {
+    const parsedCounts = parseGameString(gameString);
+    return generateSolveGame(parsedCounts.rowCounts, parsedCounts.colCounts);
+}
+
+function buildGameFromQueryString(queryString) {
+    return buildGameFromGameString(decodeGameURLQueryString(queryString));
 }
 
 module.exports = {
     makeGameString: makeGameString,
-    makeGameURLComponent: makeGameURLComponent
+    makeGameURLQueryString: makeGameURLQueryString,
+    parseGameString: parseGameString,
+    buildGameFromGameString: buildGameFromGameString,
+    buildGameFromQueryString: buildGameFromQueryString
 }
