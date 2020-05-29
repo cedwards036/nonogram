@@ -38,10 +38,15 @@ function buildGameFromQueryString(queryString) {
     return buildGameFromGameString(decodeGameURLQueryString(queryString));
 }
 
+function extractGameQuery(url) {
+    return url.slice(url.indexOf('?puzzle=') + 8);
+}
+
 module.exports = {
     makeGameString: makeGameString,
     makeGameURLQueryString: makeGameURLQueryString,
     parseGameString: parseGameString,
     buildGameFromGameString: buildGameFromGameString,
-    buildGameFromQueryString: buildGameFromQueryString
+    buildGameFromQueryString: buildGameFromQueryString,
+    extractGameQuery: extractGameQuery
 }

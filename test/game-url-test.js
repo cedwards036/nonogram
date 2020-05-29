@@ -4,6 +4,7 @@ const STATES = require('../src/game.js').STATES;
 const makeGameString = require('../src/game-url.js').makeGameString;
 const parseGameString = require('../src/game-url.js').parseGameString;
 const buildGameFromGameString = require('../src/game-url.js').buildGameFromGameString;
+const extractGameQuery = require('../src/game-url.js').extractGameQuery;
 
 describe('makeGameString', () => {
     it('starts with comma-separated row counts with each count set separated by a semi-colon', () => {
@@ -40,5 +41,11 @@ describe('buildGameFromGameString', () => {
             [STATES.EMPTY, STATES.EMPTY, STATES.EMPTY,]
         ]};
         assert.deepStrictEqual(expected, buildGameFromGameString('2;1;2#2;1,1;1'));
+    });
+});
+
+describe('extractGameQuery', () => {
+    it('should return the string following "puzzle=" in the given url', () => {
+        assert.equal('some-query-string', extractGameQuery('https://nonogram.com?puzzle=some-query-string'));
     });
 });
