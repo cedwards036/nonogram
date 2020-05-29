@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha",
-    "compile": "babel scripts --out-dir lib"
+    "build": "webpack"
   },
   "repository": {
     "type": "git",
@@ -21,16 +21,9 @@
   },
   "homepage": "https://github.com/cedwards036/nonogram#readme",
   "devDependencies": {
-    "@babel/core": "^7.9.0",
-    "@babel/preset-env": "^7.9.0",
-    "factor-bundle": "^2.5.0",
-    "grunt": "^1.1.0",
-    "grunt-babel": "^8.0.0",
-    "grunt-browserify": "^5.3.0",
-    "grunt-contrib-clean": "^2.0.0",
-    "grunt-contrib-jshint": "^2.1.0",
-    "grunt-contrib-uglify": "^4.0.1",
-    "mocha": "^7.1.1"
+    "mocha": "^7.1.1",
+    "webpack": "^4.43.0",
+    "webpack-cli": "^3.3.11"
   },
   "dependencies": {}
 }
