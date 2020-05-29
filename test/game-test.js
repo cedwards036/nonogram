@@ -5,6 +5,8 @@ const generateSolveGame = require('../src/game.js').generateSolveGame;
 const interactWithCell = require('../src/game.js').interactWithCell;
 const updateColumnCounts = require('../src/game.js').updateColumnCounts;
 const updateRowCounts = require('../src/game.js').updateRowCounts;
+const makeGameFrom2DArray = require('../src/game.js').makeGameFrom2DArray;
+const puzzleIsSolved = require('../src/game.js').puzzleIsSolved;
 const STATES = require('../src/game.js').STATES;
 const MESSAGES = require('../src/game.js').MESSAGES;
 
@@ -144,5 +146,36 @@ describe('generateSolveGame', () => {
             [STATES.EMPTY, STATES.EMPTY, STATES.EMPTY,]
         ]};
         assert.deepEqual(expected, generateSolveGame(rowCounts, colCounts));
+    });
+});
+
+describe('puzzleIsSolved', () => {
+    it('an empty puzzle is solved if all counts are 0', () => {
+        const game = generateSolveGame([[0], [0]], [[0], [0]])
+        assert.equal(true, puzzleIsSolved(game));
+    });
+
+    it('an empty puzzle is not solved if at least one count is not 0', () => {
+        const game = generateSolveGame([[0], [1]], [[0], [0]])
+        assert.equal(false, puzzleIsSolved(game));
+    });
+
+    it ('a puzzle is solved if the number of filled cells in each row and column match the respective counts', () => {
+        const game = makeGameFrom2DArray([
+            [1, 0, 1, 1],
+            [1, 1, 0, 0],
+            [1, 1, 1, 0]
+        ]);
+        assert.equal(true, puzzleIsSolved(game));
+    });
+
+    it ('a puzzle is not solved if the number of filled cells in each row and column does not match the respective counts', () => {
+        var game = makeGameFrom2DArray([
+            [1, 0, 1, 1],
+            [1, 1, 0, 0],
+            [1, 1, 1, 0]
+        ]);
+        game = interactWithCell(MESSAGES.BLANK, 0, 0, game);
+        assert.equal(false, puzzleIsSolved(game));
     });
 });

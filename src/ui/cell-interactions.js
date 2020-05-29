@@ -1,28 +1,44 @@
 const interactWithCell = require('../game.js').interactWithCell
 const updateColumnCounts = require('../game.js').updateColumnCounts;
 const updateRowCounts = require('../game.js').updateRowCounts;
+const puzzleIsSolved = require('../game.js').puzzleIsSolved;
 const MESSAGES = require('../game.js').MESSAGES
 const updateLineCountsColumnDiv = require('./render-game.js').updateLineCountsColumnDiv;
 const updateCellStateClass = require('./render-game.js').updateCellStateClass
 const getCellClass = require('./render-game.js').getCellClass;
 const updateGameURL = require('./render-game-url.js').updateGameURL;
 
-function addCellEventListeners(game) {
+function addCreationCellEventListeners(game) {
     Array.from(document.getElementsByClassName('cell')).forEach(cell => {
         cell.addEventListener('click', () => {
-            handleCellClick(game, cell, MESSAGES.FILL)
+            handleCreationCellClick(game, cell, MESSAGES.FILL)
         });
     }); 
-
-    Array.from(document.getElementsByClassName('cell')).forEach(cell => {
-        cell.addEventListener('contextmenu', (e) => {
-            handleCellClick(game, cell, MESSAGES.BLANK)
-            e.preventDefault();
-        });
-    });
 }
 
-function handleCellClick(game, cell, message) {
+function addSolveCellEventListeners(game) {
+    Array.from(document.getElementsByClassName('cell')).forEach(cell => {
+        cell.addEventListener('click', () => {
+            handleSolveCellClick(game, cell, MESSAGES.FILL)
+        });
+        cell.addEventListener('contextmenu', (e) => {
+            handleSolveCellClick(game, cell, MESSAGES.BLANK)
+            e.preventDefault();
+        });
+    }); 
+}
+
+function handleSolveCellClick(game, cell, message) {
+    const rowIdx = cell.getAttribute('rowIdx');
+    const colIdx = cell.getAttribute('colIdx');
+    interactWithCell(message, rowIdx, colIdx, game);
+    updateCellStateClass(cell, getCellClass(game.board[rowIdx][colIdx]));
+    if (puzzleIsSolved(game)) {
+        alert('You did it!')
+    }
+}
+
+function handleCreationCellClick(game, cell, message) {
     const rowIdx = cell.getAttribute('rowIdx');
     const colIdx = cell.getAttribute('colIdx');
     interactWithCell(message, rowIdx, colIdx, game);
@@ -55,5 +71,6 @@ function getNthRowCountsCol(n) {
 }
 
 module.exports = {
-    addCellEventListeners: addCellEventListeners
+    addCreationCellEventListeners: addCreationCellEventListeners,
+    addSolveCellEventListeners: addSolveCellEventListeners
 }

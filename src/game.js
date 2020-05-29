@@ -9,33 +9,33 @@ const MESSAGES = {
     BLANK: 'blank'
 }
 
-const creationFSM = buildCreationFSM();
+const FSM = buildFSM();
 
 function generateSolveGame(rowCounts, colCounts) {
-    const board = generateEmptyBoard(rowCounts.length, colCounts.length);
+    const board = generateEmptyBoard(colCounts.length, rowCounts.length);
     return {rowCounts: rowCounts, colCounts: colCounts, board: board};
 }
 
-function generateCreationGame(m, n) {
+function generateCreationGame(width, height) {
     const game = {rowCounts: [], colCounts: []};
-    for (let i = 0; i < n; i++) {
+    for (let i = 0; i < height; i++) {
         game.rowCounts.push([0])
     }
-    for (let i = 0; i < m; i++) {
+    for (let i = 0; i < width; i++) {
         game.colCounts.push([0])
     }
-    game.board = generateEmptyBoard(m, n);
+    game.board = generateEmptyBoard(width, height);
     return game;
 }
 
-function generateEmptyBoard(m, n) {
-    if (m === 0 || n === 0) {
+function generateEmptyBoard(width, height) {
+    if (width === 0 || height === 0) {
         return [];
     } else {
         let board = [];
-        for (let i = 0; i < n; i++) {
+        for (let i = 0; i < height; i++) {
             board.push([]);
-            for (let j = 0; j < m; j++) {
+            for (let j = 0; j < width; j++) {
                 board[i].push(STATES.EMPTY)
             }
         }
@@ -61,7 +61,7 @@ function makeGameFrom2DArray(arr) {
     return game;
 }
 
-function buildCreationFSM() {
+function buildFSM() {
     function addStateTransition(finiteStateMachine, givenState, message, newState) {
         if (!finiteStateMachine.hasOwnProperty(givenState)) {
             finiteStateMachine[givenState] = {};
@@ -80,11 +80,16 @@ function buildCreationFSM() {
 
 function interactWithCell(msg, rowIdx, colIdx, game) {
     const currentCellState = game.board[rowIdx][colIdx];
-    game.board[rowIdx][colIdx] = creationFSM[currentCellState][msg];
+    game.board[rowIdx][colIdx] = FSM[currentCellState][msg];
     return game;
 }
 
 function updateColumnCounts(game, colIdx) {
+    game.colCounts[colIdx] = makeColumnCounts(game, colIdx);
+    return game;
+}
+
+function makeColumnCounts(game, colIdx) {
     const columnCounts = [];
     let i = 0;
     var curCount = 0;
@@ -100,14 +105,18 @@ function updateColumnCounts(game, colIdx) {
         i++;
     }
     if (columnCounts.length === 0) {
-        game.colCounts[colIdx] = [0];
+        return [0];
     } else {
-        game.colCounts[colIdx] = columnCounts;
+        return columnCounts;
     }
-    return game;
 }
 
 function updateRowCounts(game, rowIdx) {
+    game.rowCounts[rowIdx] = makeRowCounts(game, rowIdx);
+    return game;
+}
+
+function makeRowCounts(game, rowIdx) {
     const rowCounts = [];
     let i = 0;
     var curCount = 0;
@@ -123,11 +132,35 @@ function updateRowCounts(game, rowIdx) {
         i++;
     }
     if (rowCounts.length === 0) {
-        game.rowCounts[rowIdx] = [0];
+        return [0];
     } else {
-        game.rowCounts[rowIdx] = rowCounts;
+        return rowCounts;
     }
-    return game;
+}
+
+function puzzleIsSolved(game) {
+    const rowsAreCorrect = game.rowCounts.reduce((result, counts, rowIdx) => {
+        return result && arrEquals(makeRowCounts(game, rowIdx), counts);
+    }, true);
+    const colsAreCorrect = game.colCounts.reduce((result, counts, colIdx) => {
+        return result && arrEquals(makeColumnCounts(game, colIdx), counts);
+    }, true);
+    return rowsAreCorrect && colsAreCorrect;
+}
+
+function arrEquals(arr1, arr2) {
+    if (!arr1 || !arr2) {
+        return false;
+    } else if (arr1.length != arr2.length) {
+        return false;
+    } else {
+        for (let i = 0; i < arr1.length; i++) {
+            if (arr1[i] !== arr2[i]) {
+                return false;
+            }
+        }
+        return true;
+    }
 }
 
 module.exports = {
@@ -138,6 +171,7 @@ module.exports = {
     updateColumnCounts: updateColumnCounts,
     updateRowCounts: updateRowCounts,
     makeGameFrom2DArray: makeGameFrom2DArray,
+    puzzleIsSolved: puzzleIsSolved,
     STATES: STATES,
     MESSAGES: MESSAGES
 }

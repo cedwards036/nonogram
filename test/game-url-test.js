@@ -35,12 +35,13 @@ describe('parseGameString', () => {
 
 describe('buildGameFromGameString', () => {
     it('creates an empty game with the row and column counts indicated by the game string', () => {
-        const expected = {rowCounts: [[2], [1], [2]], colCounts: [[2], [1, 1], [1]], board: [
+        const expected = {rowCounts: [[2], [1], [2], [3]], colCounts: [[2], [1, 1], [1]], board: [
             [STATES.EMPTY, STATES.EMPTY, STATES.EMPTY],
+            [STATES.EMPTY, STATES.EMPTY, STATES.EMPTY,],
             [STATES.EMPTY, STATES.EMPTY, STATES.EMPTY,],
             [STATES.EMPTY, STATES.EMPTY, STATES.EMPTY,]
         ]};
-        assert.deepStrictEqual(expected, buildGameFromGameString('2;1;2#2;1,1;1'));
+        assert.deepStrictEqual(expected, buildGameFromGameString('2;1;2;3#2;1,1;1'));
     });
 });
 
