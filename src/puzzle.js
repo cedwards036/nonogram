@@ -11,21 +11,21 @@ const MESSAGES = {
 
 const FSM = buildFSM();
 
-function generateSolveGame(rowCounts, colCounts) {
+function generateSolvePuzzle(rowCounts, colCounts) {
     const board = generateEmptyBoard(colCounts.length, rowCounts.length);
     return {rowCounts: rowCounts, colCounts: colCounts, board: board};
 }
 
-function generateCreationGame(width, height) {
-    const game = {rowCounts: [], colCounts: []};
+function generateCreationPuzzle(width, height) {
+    const puzzle = {rowCounts: [], colCounts: []};
     for (let i = 0; i < height; i++) {
-        game.rowCounts.push([0])
+        puzzle.rowCounts.push([0])
     }
     for (let i = 0; i < width; i++) {
-        game.colCounts.push([0])
+        puzzle.colCounts.push([0])
     }
-    game.board = generateEmptyBoard(width, height);
-    return game;
+    puzzle.board = generateEmptyBoard(width, height);
+    return puzzle;
 }
 
 function generateEmptyBoard(width, height) {
@@ -43,22 +43,22 @@ function generateEmptyBoard(width, height) {
     }
 }
 
-function makeGameFrom2DArray(arr) {
-    const game = generateCreationGame(arr[0].length, arr.length);
+function makePuzzleFrom2DArray(arr) {
+    const puzzle = generateCreationPuzzle(arr[0].length, arr.length);
     for (let i = 0; i < arr.length; i++) {
         for (let j = 0; j < arr[0].length; j++) {
             if (arr[i][j] === 1) {
-                interactWithCell(MESSAGES.FILL, i, j, game);
+                interactWithCell(MESSAGES.FILL, i, j, puzzle);
             }
         }
     }
     for (let i = 0; i < arr.length; i++) {
-        updateRowCounts(game, i);
+        updateRowCounts(puzzle, i);
     }
     for (let i = 0; i < arr[0].length; i++) {
-        updateColumnCounts(game, i);
+        updateColumnCounts(puzzle, i);
     }
-    return game;
+    return puzzle;
 }
 
 function buildFSM() {
@@ -78,23 +78,23 @@ function buildFSM() {
     return finiteStateMachine;
 }
 
-function interactWithCell(msg, rowIdx, colIdx, game) {
-    const currentCellState = game.board[rowIdx][colIdx];
-    game.board[rowIdx][colIdx] = FSM[currentCellState][msg];
-    return game;
+function interactWithCell(msg, rowIdx, colIdx, puzzle) {
+    const currentCellState = puzzle.board[rowIdx][colIdx];
+    puzzle.board[rowIdx][colIdx] = FSM[currentCellState][msg];
+    return puzzle;
 }
 
-function updateColumnCounts(game, colIdx) {
-    game.colCounts[colIdx] = makeColumnCounts(game, colIdx);
-    return game;
+function updateColumnCounts(puzzle, colIdx) {
+    puzzle.colCounts[colIdx] = makeColumnCounts(puzzle, colIdx);
+    return puzzle;
 }
 
-function makeColumnCounts(game, colIdx) {
+function makeColumnCounts(puzzle, colIdx) {
     const columnCounts = [];
     let i = 0;
     var curCount = 0;
-    while (i < game.board.length) {
-        while (i < game.board.length && game.board[i][colIdx] === STATES.FILLED) {
+    while (i < puzzle.board.length) {
+        while (i < puzzle.board.length && puzzle.board[i][colIdx] === STATES.FILLED) {
             curCount++;
             i++;
         }
@@ -111,17 +111,17 @@ function makeColumnCounts(game, colIdx) {
     }
 }
 
-function updateRowCounts(game, rowIdx) {
-    game.rowCounts[rowIdx] = makeRowCounts(game, rowIdx);
-    return game;
+function updateRowCounts(puzzle, rowIdx) {
+    puzzle.rowCounts[rowIdx] = makeRowCounts(puzzle, rowIdx);
+    return puzzle;
 }
 
-function makeRowCounts(game, rowIdx) {
+function makeRowCounts(puzzle, rowIdx) {
     const rowCounts = [];
     let i = 0;
     var curCount = 0;
-    while (i < game.board[0].length) {
-        while (i < game.board[0].length && game.board[rowIdx][i] === STATES.FILLED) {
+    while (i < puzzle.board[0].length) {
+        while (i < puzzle.board[0].length && puzzle.board[rowIdx][i] === STATES.FILLED) {
             curCount++;
             i++;
         }
@@ -138,12 +138,12 @@ function makeRowCounts(game, rowIdx) {
     }
 }
 
-function puzzleIsSolved(game) {
-    const rowsAreCorrect = game.rowCounts.reduce((result, counts, rowIdx) => {
-        return result && arrEquals(makeRowCounts(game, rowIdx), counts);
+function puzzleIsSolved(puzzle) {
+    const rowsAreCorrect = puzzle.rowCounts.reduce((result, counts, rowIdx) => {
+        return result && arrEquals(makeRowCounts(puzzle, rowIdx), counts);
     }, true);
-    const colsAreCorrect = game.colCounts.reduce((result, counts, colIdx) => {
-        return result && arrEquals(makeColumnCounts(game, colIdx), counts);
+    const colsAreCorrect = puzzle.colCounts.reduce((result, counts, colIdx) => {
+        return result && arrEquals(makeColumnCounts(puzzle, colIdx), counts);
     }, true);
     return rowsAreCorrect && colsAreCorrect;
 }
@@ -164,13 +164,13 @@ function arrEquals(arr1, arr2) {
 }
 
 module.exports = {
-    generateSolveGame: generateSolveGame,
-    generateCreationGame: generateCreationGame,
+    generateSolvePuzzle: generateSolvePuzzle,
+    generateCreationPuzzle: generateCreationPuzzle,
     generateEmptyBoard: generateEmptyBoard,
     interactWithCell: interactWithCell,
     updateColumnCounts: updateColumnCounts,
     updateRowCounts: updateRowCounts,
-    makeGameFrom2DArray: makeGameFrom2DArray,
+    makePuzzleFrom2DArray: makePuzzleFrom2DArray,
     puzzleIsSolved: puzzleIsSolved,
     STATES: STATES,
     MESSAGES: MESSAGES

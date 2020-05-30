@@ -1,11 +1,11 @@
-const createGame = require('./create-game.js').createGame;
+const createPuzzle = require('./create-puzzle.js').createPuzzle;
 
-function setGameDimensions() {
+function setPuzzleDimensions() {
     const height = document.getElementById('yDimensionInput').value;
     const width = document.getElementById('xDimensionInput').value;
     if (dimensionsAreValid(width, height)) {
-        clearGame();
-        createGame(width, height);
+        clearPuzzle();
+        createPuzzle(width, height);
     } else {
         resetDimensions();
         alert('ERROR: invalid dimensions');
@@ -28,7 +28,7 @@ function dimensionsAreValid(width, height) {
     return isValidDimension(height) && isValidDimension(width)
 }
 
-function clearGame() {
+function clearPuzzle() {
     document.getElementById('cellGrid').innerHTML = '';
     document.getElementById('colCounts').innerHTML = '';
     document.getElementById('rowCounts').innerHTML = '';
@@ -40,5 +40,5 @@ function resetDimensions() {
 }
 
 module.exports = {
-    setGameDimensions: setGameDimensions
+    setPuzzleDimensions: setPuzzleDimensions
 }

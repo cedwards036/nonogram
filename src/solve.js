@@ -1,8 +1,8 @@
-const renderGame = require('./ui/render-game.js').renderGame;
-const extractGameQuery = require('./game-url.js').extractGameQuery;
-const buildGameFromQueryString = require('./game-url.js').buildGameFromQueryString;
+const renderPuzzle = require('./ui/render-puzzle.js').renderPuzzle;
+const extractPuzzleQuery = require('./puzzle-url.js').extractPuzzleQuery;
+const buildPuzzleFromQueryString = require('./puzzle-url.js').buildPuzzleFromQueryString;
 const addSolveCellEventListeners = require('./ui/cell-interactions.js').addSolveCellEventListeners
 
-const game = buildGameFromQueryString(extractGameQuery(window.location.href));
-renderGame(game);
-addSolveCellEventListeners(game);
+const puzzle = buildPuzzleFromQueryString(extractPuzzleQuery(window.location.href));
+renderPuzzle(puzzle);
+addSolveCellEventListeners(puzzle);

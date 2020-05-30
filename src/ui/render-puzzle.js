@@ -1,17 +1,17 @@
-const STATES = require('../game.js').STATES
+const STATES = require('../puzzle.js').STATES
 
-function renderGame(game) {
-    renderCellGrid(game);
-    renderRowCounts(game);
-    renderColCounts(game);
+function renderPuzzle(puzzle) {
+    renderCellGrid(puzzle);
+    renderRowCounts(puzzle);
+    renderColCounts(puzzle);
 }
 
-function renderCellGrid(game) {
+function renderCellGrid(puzzle) {
     const grid = document.getElementById('cellGrid');
-    for (let i = 0; i < game.board.length; i++) {
+    for (let i = 0; i < puzzle.board.length; i++) {
         const row = createEmptyRow();
-        for (let j = 0; j < game.board[i].length; j++) {
-            row.appendChild(createCell(game.board, i, j));
+        for (let j = 0; j < puzzle.board[i].length; j++) {
+            row.appendChild(createCell(puzzle.board, i, j));
         }
         grid.appendChild(row);
     }
@@ -46,12 +46,12 @@ function updateCellStateClass(cell, stateClass) {
     cell.setAttribute('class', 'cell ' + stateClass);
 }
 
-function renderRowCounts(game) {
-    createCountsCollection(game.rowCounts, document.getElementById('rowCounts'));
+function renderRowCounts(puzzle) {
+    createCountsCollection(puzzle.rowCounts, document.getElementById('rowCounts'));
 }
 
-function renderColCounts(game) {
-    createCountsCollection(game.colCounts, document.getElementById('colCounts'));
+function renderColCounts(puzzle) {
+    createCountsCollection(puzzle.colCounts, document.getElementById('colCounts'));
 }
 
 function createCountsCollection(counts, parentDiv) {
@@ -89,7 +89,7 @@ function createCountDiv(count) {
 }
 
 module.exports = {
-    renderGame: renderGame,
+    renderPuzzle: renderPuzzle,
     updateLineCountsColumnDiv: updateLineCountsColumnDiv,
     updateCellStateClass: updateCellStateClass,
     getCellClass: getCellClass
