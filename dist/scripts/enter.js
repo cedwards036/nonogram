@@ -81,10 +81,32 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = "./src/solve.js");
+/******/ 	return __webpack_require__(__webpack_require__.s = "./src/enter.js");
 /******/ })
 /************************************************************************/
 /******/ ({
+
+/***/ "./src/enter.js":
+/*!**********************!*\
+  !*** ./src/enter.js ***!
+  \**********************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("const createEnterPuzzle = __webpack_require__(/*! ./ui/create-puzzle.js */ \"./src/ui/create-puzzle.js\").createEnterPuzzle;\r\nconst makePuzzleDimensionsSetter = __webpack_require__(/*! ./ui/puzzle-dimensions.js */ \"./src/ui/puzzle-dimensions.js\").makePuzzleDimensionsSetter;\r\n\r\nconst DEFAULT_DIMENSION = 5;\r\n\r\nfunction initializeUI() {\r\n    const puzzle = createEnterPuzzle(DEFAULT_DIMENSION, DEFAULT_DIMENSION);\r\n    document.getElementById('xDimensionInput').defaultValue = DEFAULT_DIMENSION;\r\n    document.getElementById('yDimensionInput').defaultValue = DEFAULT_DIMENSION;\r\n    document.getElementById('dimensionsForm').onsubmit = makePuzzleDimensionsSetter(createEnterPuzzle);\r\n}\r\n\r\ninitializeUI();\n\n//# sourceURL=webpack:///./src/enter.js?");
+
+/***/ }),
+
+/***/ "./src/puzzle-entry-parsing.js":
+/*!*************************************!*\
+  !*** ./src/puzzle-entry-parsing.js ***!
+  \*************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+eval("function parseCountGroupString(countGroupString, maxSize) {\r\n    countGroupString = removeWhitespace(countGroupString);\r\n    if (isValidString(countGroupString)) {\r\n        var countGroup = countGroupString.split(',').map(x => parseInt(x));\r\n        countGroup = filterOutUnnecessaryZeros(countGroup);\r\n        if (countGroupSumIsTooBig(countGroup, maxSize)) {\r\n            throw new InvalidInputError('Numbers are too big for their row/column');\r\n        }\r\n        return countGroup;\r\n    } else {\r\n        throw new InvalidInputError('Input contains invalid characters or dangling commas');\r\n    }\r\n}\r\n\r\nfunction removeWhitespace(s) {\r\n    return s.replace(/\\s/g, '');\r\n}\r\n\r\nfunction isValidString(countGroupString) {\r\n    return /^\\d(,?\\s*\\d\\s*)*$/.test(countGroupString)\r\n}\r\n\r\nfunction filterOutUnnecessaryZeros(countGroup) {\r\n    if (countGroup.length > 1) {\r\n        return countGroup.filter(num => num != 0);\r\n    } else {\r\n        return countGroup;\r\n    }\r\n}\r\n\r\nfunction countGroupSumIsTooBig(countGroup, maxSize) {\r\n    return countGroup.reduce((sum, x) => sum + x, 0) + countGroup.length - 1 > maxSize\r\n}\r\n\r\nclass InvalidInputError extends Error {\r\n    constructor(message) {\r\n        super(message);\r\n        this.name = 'InvalidInputError';\r\n    }\r\n}\r\n\r\nmodule.exports = {\r\n    parseCountGroupString: parseCountGroupString,\r\n    InvalidInputError: InvalidInputError\r\n}\n\n//# sourceURL=webpack:///./src/puzzle-entry-parsing.js?");
+
+/***/ }),
 
 /***/ "./src/puzzle-url.js":
 /*!***************************!*\
@@ -108,17 +130,6 @@ eval("const STATES = {\r\n    EMPTY: 'empty',\r\n    FILLED: 'filled',\r\n    BL
 
 /***/ }),
 
-/***/ "./src/solve.js":
-/*!**********************!*\
-  !*** ./src/solve.js ***!
-  \**********************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-eval("const renderPuzzle = __webpack_require__(/*! ./ui/render-puzzle.js */ \"./src/ui/render-puzzle.js\").renderPuzzle;\r\nconst extractPuzzleQuery = __webpack_require__(/*! ./puzzle-url.js */ \"./src/puzzle-url.js\").extractPuzzleQuery;\r\nconst buildPuzzleFromQueryString = __webpack_require__(/*! ./puzzle-url.js */ \"./src/puzzle-url.js\").buildPuzzleFromQueryString;\r\nconst addSolveCellEventListeners = __webpack_require__(/*! ./ui/cell-interactions.js */ \"./src/ui/cell-interactions.js\").addSolveCellEventListeners\r\n\r\nconst puzzle = buildPuzzleFromQueryString(extractPuzzleQuery(window.location.href));\r\nrenderPuzzle(puzzle);\r\naddSolveCellEventListeners(puzzle);\n\n//# sourceURL=webpack:///./src/solve.js?");
-
-/***/ }),
-
 /***/ "./src/ui/cell-interactions.js":
 /*!*************************************!*\
   !*** ./src/ui/cell-interactions.js ***!
@@ -127,6 +138,39 @@ eval("const renderPuzzle = __webpack_require__(/*! ./ui/render-puzzle.js */ \"./
 /***/ (function(module, exports, __webpack_require__) {
 
 eval("const interactWithCell = __webpack_require__(/*! ../puzzle.js */ \"./src/puzzle.js\").interactWithCell\r\nconst updateColumnCountGroup = __webpack_require__(/*! ../puzzle.js */ \"./src/puzzle.js\").updateColumnCountGroup;\r\nconst updateRowCountGroup = __webpack_require__(/*! ../puzzle.js */ \"./src/puzzle.js\").updateRowCountGroup;\r\nconst puzzleIsSolved = __webpack_require__(/*! ../puzzle.js */ \"./src/puzzle.js\").puzzleIsSolved;\r\nconst MESSAGES = __webpack_require__(/*! ../puzzle.js */ \"./src/puzzle.js\").MESSAGES\r\nconst updateCountGroupDiv = __webpack_require__(/*! ./render-puzzle.js */ \"./src/ui/render-puzzle.js\").updateCountGroupDiv;\r\nconst updateCellStateClass = __webpack_require__(/*! ./render-puzzle.js */ \"./src/ui/render-puzzle.js\").updateCellStateClass\r\nconst getCellClass = __webpack_require__(/*! ./render-puzzle.js */ \"./src/ui/render-puzzle.js\").getCellClass;\r\nconst updatePuzzleURL = __webpack_require__(/*! ./render-puzzle-url.js */ \"./src/ui/render-puzzle-url.js\").updatePuzzleURL;\r\n\r\nfunction addCreationCellEventListeners(puzzle) {\r\n    Array.from(document.getElementsByClassName('cell')).forEach(cell => {\r\n        cell.addEventListener('click', () => {\r\n            handleCreationCellClick(puzzle, cell, MESSAGES.FILL)\r\n        });\r\n    }); \r\n}\r\n\r\nfunction addSolveCellEventListeners(puzzle) {\r\n    Array.from(document.getElementsByClassName('cell')).forEach(cell => {\r\n        cell.addEventListener('click', () => {\r\n            handleSolveCellClick(puzzle, cell, MESSAGES.FILL)\r\n        });\r\n        cell.addEventListener('contextmenu', (e) => {\r\n            handleSolveCellClick(puzzle, cell, MESSAGES.BLANK)\r\n            e.preventDefault();\r\n        });\r\n    }); \r\n}\r\n\r\nfunction handleSolveCellClick(puzzle, cell, message) {\r\n    const rowIdx = cell.getAttribute('rowIdx');\r\n    const colIdx = cell.getAttribute('colIdx');\r\n    interactWithCell(message, rowIdx, colIdx, puzzle);\r\n    updateCellStateClass(cell, getCellClass(puzzle.board[rowIdx][colIdx]));\r\n    if (puzzleIsSolved(puzzle)) {\r\n        alert('You did it!')\r\n    }\r\n}\r\n\r\nfunction handleCreationCellClick(puzzle, cell, message) {\r\n    const rowIdx = cell.getAttribute('rowIdx');\r\n    const colIdx = cell.getAttribute('colIdx');\r\n    interactWithCell(message, rowIdx, colIdx, puzzle);\r\n    updateColumnCountDivs(puzzle, colIdx);\r\n    updateRowCountDivs(puzzle, rowIdx);\r\n    updateCellStateClass(cell, getCellClass(puzzle.board[rowIdx][colIdx]));\r\n    updatePuzzleURL(puzzle);\r\n}\r\n\r\nfunction updateColumnCountDivs(puzzle, colIdx) {\r\n    updateColumnCountGroup(puzzle, colIdx);\r\n    const colCountGroupsDiv = getNthColumnCountsCol(colIdx);\r\n    updateCountGroupDiv(colCountGroupsDiv, puzzle.colCountGroups[colIdx]);\r\n}\r\n\r\nfunction getNthColumnCountsCol(n) {\r\n    return document.getElementById('colCountGroups')\r\n                   .getElementsByClassName('count-group')[n];\r\n}\r\n\r\nfunction updateRowCountDivs(puzzle, rowIdx) {\r\n    updateRowCountGroup(puzzle, rowIdx);\r\n    const rowCountGroupsDiv = getNthRowCountsCol(rowIdx);\r\n    updateCountGroupDiv(rowCountGroupsDiv, puzzle.rowCountGroups[rowIdx]);\r\n}\r\n\r\nfunction getNthRowCountsCol(n) {\r\n    return document.getElementById('rowCountGroups')\r\n                   .getElementsByClassName('count-group')[n];\r\n}\r\n\r\nmodule.exports = {\r\n    addCreationCellEventListeners: addCreationCellEventListeners,\r\n    addSolveCellEventListeners: addSolveCellEventListeners\r\n}\n\n//# sourceURL=webpack:///./src/ui/cell-interactions.js?");
+
+/***/ }),
+
+/***/ "./src/ui/create-puzzle.js":
+/*!*********************************!*\
+  !*** ./src/ui/create-puzzle.js ***!
+  \*********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("const generateEmptyPuzzle = __webpack_require__(/*! ../puzzle.js */ \"./src/puzzle.js\").generateEmptyPuzzle\r\nconst renderPuzzle = __webpack_require__(/*! ./render-puzzle.js */ \"./src/ui/render-puzzle.js\").renderPuzzle;\r\nconst addCreationCellEventListeners = __webpack_require__(/*! ./cell-interactions.js */ \"./src/ui/cell-interactions.js\").addCreationCellEventListeners;\r\nconst updatePuzzleURL = __webpack_require__(/*! ./render-puzzle-url.js */ \"./src/ui/render-puzzle-url.js\").updatePuzzleURL;\r\n\r\nfunction createCreationPuzzle(height, width) {\r\n    return createPuzzle(height, width, addCreationCellEventListeners);\r\n}\r\n\r\nconst addEventListenersToCounts = __webpack_require__(/*! ./modal.js */ \"./src/ui/modal.js\").addEventListenersToCounts;\r\nconst addModalCloseEventListener = __webpack_require__(/*! ./modal.js */ \"./src/ui/modal.js\").addModalCloseEventListener;\r\n\r\nfunction createEnterPuzzle(height, width) {\r\n    return createPuzzle(height, width, puzzle => {\r\n        addEventListenersToCounts(puzzle);\r\n        addModalCloseEventListener(puzzle);\r\n    });\r\n}\r\n\r\nfunction createPuzzle(height, width, eventListenerFunction) {\r\n    const newPuzzle = generateEmptyPuzzle(height, width);\r\n    renderPuzzle(newPuzzle);\r\n    eventListenerFunction(newPuzzle);\r\n    updatePuzzleURL(newPuzzle);\r\n    return newPuzzle;\r\n}\r\n\r\nmodule.exports = {\r\n    createCreationPuzzle: createCreationPuzzle,\r\n    createEnterPuzzle: createEnterPuzzle\r\n}\n\n//# sourceURL=webpack:///./src/ui/create-puzzle.js?");
+
+/***/ }),
+
+/***/ "./src/ui/modal.js":
+/*!*************************!*\
+  !*** ./src/ui/modal.js ***!
+  \*************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("const updateCountGroupDiv = __webpack_require__(/*! ./render-puzzle.js */ \"./src/ui/render-puzzle.js\").updateCountGroupDiv;\r\nconst parseCountGroupString = __webpack_require__(/*! ../puzzle-entry-parsing.js */ \"./src/puzzle-entry-parsing.js\").parseCountGroupString;\r\nconst updatePuzzleURL = __webpack_require__(/*! ./render-puzzle-url.js */ \"./src/ui/render-puzzle-url.js\").updatePuzzleURL;\r\n\r\nconst modalBackground = document.getElementsByClassName('modal-background')[0];\r\n\r\nfunction addEventListenersToCounts(puzzle) {\r\n    const colCountGroups = document.getElementById('colCountGroups').getElementsByClassName('count-group');\r\n    addEventListenersToCountGroups(puzzle, colCountGroups, openColumnModal);\r\n    const rowCountGroups = document.getElementById('rowCountGroups').getElementsByClassName('count-group');\r\n    addEventListenersToCountGroups(puzzle, rowCountGroups, openRowModal);\r\n}\r\n\r\nfunction addEventListenersToCountGroups(puzzle, countGroups, openFunction) {\r\n    Array.from(countGroups).forEach((countGroup, idx) => {\r\n        addEventListenersToCountGroup(puzzle, countGroup, idx, openFunction);\r\n    });\r\n}\r\n\r\nfunction addEventListenersToCountGroup(puzzle, countGroup, idx, openFunction) {\r\n    Array.from(countGroup.getElementsByClassName('count')).forEach(col => {\r\n        col.addEventListener('click', () => {openFunction(puzzle, countGroup, idx)});\r\n    });\r\n}\r\n\r\nfunction addModalCloseEventListener() {\r\n    document.getElementById('closeBtn').addEventListener('click', closeModal);\r\n}\r\n\r\nfunction openRowModal(puzzle, countGroupDiv, idx) {\r\n    modalBackground.style.display = 'block';\r\n    const input = document.getElementById('enterCountsInput');\r\n    input.focus();\r\n    input.value = puzzle.rowCountGroups[idx].join(',') \r\n    document.getElementById('enterCountsForm').onsubmit = () => {\r\n        try {\r\n            const newCounts = parseCountGroupString(input.value, puzzle.board[0].length);\r\n            puzzle.rowCountGroups[idx] = newCounts;\r\n            updateCountGroupDiv(countGroupDiv, newCounts);\r\n            addEventListenersToCountGroup(puzzle, countGroupDiv, idx, openRowModal);\r\n            hideError();\r\n            closeModal();\r\n            updatePuzzleURL(puzzle);\r\n        } catch (e) {\r\n            showError(e.message);\r\n        }\r\n        return false;\r\n    }\r\n}\r\n\r\nfunction openColumnModal(puzzle, countGroupDiv, idx) {\r\n    modalBackground.style.display = 'block';\r\n    const input = document.getElementById('enterCountsInput');\r\n    input.focus(); \r\n    input.value = puzzle.colCountGroups[idx].join(',')\r\n    document.getElementById('enterCountsForm').onsubmit = () => {\r\n        try {\r\n            const newCounts = parseCountGroupString(input.value, puzzle.board.length);\r\n            puzzle.colCountGroups[idx] = newCounts;\r\n            updateCountGroupDiv(countGroupDiv, newCounts);\r\n            addEventListenersToCountGroup(puzzle, countGroupDiv, idx, openColumnModal);\r\n            hideError();\r\n            closeModal();\r\n            updatePuzzleURL(puzzle);\r\n        } catch (e) {\r\n            showError(e.message);\r\n        }\r\n        return false;\r\n    }\r\n}\r\n\r\nfunction closeModal() {\r\n    modalBackground.style.display = 'none';\r\n}\r\n\r\nfunction showError(message) {\r\n    const errorMessage = document.getElementById('enterCountsError');\r\n    errorMessage.innerHTML = message;\r\n    errorMessage.style.display = 'block';\r\n}\r\n\r\nfunction hideError() {\r\n    document.getElementById('enterCountsError').style.display = 'none';\r\n}\r\n\r\nmodule.exports = {\r\n    addEventListenersToCounts: addEventListenersToCounts,\r\n    addModalCloseEventListener: addModalCloseEventListener\r\n}\n\n//# sourceURL=webpack:///./src/ui/modal.js?");
+
+/***/ }),
+
+/***/ "./src/ui/puzzle-dimensions.js":
+/*!*************************************!*\
+  !*** ./src/ui/puzzle-dimensions.js ***!
+  \*************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("const clearPuzzle = __webpack_require__(/*! ./render-puzzle.js */ \"./src/ui/render-puzzle.js\").clearPuzzle;\r\n\r\nfunction makePuzzleDimensionsSetter(createPuzzleFunction) {\r\n    return () => {\r\n        const height = document.getElementById('yDimensionInput').value;\r\n        const width = document.getElementById('xDimensionInput').value;\r\n        if (dimensionsAreValid(width, height)) {\r\n            clearPuzzle();\r\n            createPuzzleFunction(width, height);\r\n        } else {\r\n            resetDimensions();\r\n            alert('ERROR: invalid dimensions');\r\n        }\r\n        return false;\r\n    }\r\n}\r\n\r\nfunction dimensionsAreValid(width, height) {\r\n    const MAX_DIMENSION = 15;\r\n    const MIN_DIMENSION = 1;\r\n\r\n    function isValidDimension(value) {\r\n        return isInt(value) && value >= MIN_DIMENSION && value <= MAX_DIMENSION;\r\n    }\r\n    \r\n    //https://stackoverflow.com/a/1779019\r\n    function isInt(value) {\r\n        return /^\\d+$/.test(value);\r\n    }\r\n    return isValidDimension(height) && isValidDimension(width)\r\n}\r\n\r\nfunction resetDimensions() {\r\n    document.getElementById('yDimensionInput').value = document.getElementById('rowCountGroups').childElementCount;\r\n    document.getElementById('xDimensionInput').value = document.getElementById('colCountGroups').childElementCount;\r\n}\r\n\r\nmodule.exports = {\r\n    makePuzzleDimensionsSetter: makePuzzleDimensionsSetter\r\n}\n\n//# sourceURL=webpack:///./src/ui/puzzle-dimensions.js?");
 
 /***/ }),
 

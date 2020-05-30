@@ -4,17 +4,17 @@
     grid-template-rows: auto auto;
 }
 
-#rowCounts {
+#rowCountGroups {
     display: flex;
     flex-direction: column;
 }
 
-#colCounts {
+#colCountGroups {
     display: flex;
     flex-direction: row;
 }
 
-#colCounts .counts-col {
+#colCountGroups .count-group {
     border-right: 1px solid black;
     border-left: 1px solid black;
     display: flex;
@@ -22,7 +22,7 @@
     justify-content: flex-end;
 }
 
-#rowCounts .counts-col {
+#rowCountGroups .count-group {
     border-top: 1px solid black;
     border-bottom: 1px solid black;
     display: flex;

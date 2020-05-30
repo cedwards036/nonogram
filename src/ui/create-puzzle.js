@@ -1,16 +1,31 @@
-const generateCreationPuzzle = require('../puzzle.js').generateCreationPuzzle
+const generateEmptyPuzzle = require('../puzzle.js').generateEmptyPuzzle
 const renderPuzzle = require('./render-puzzle.js').renderPuzzle;
 const addCreationCellEventListeners = require('./cell-interactions.js').addCreationCellEventListeners;
 const updatePuzzleURL = require('./render-puzzle-url.js').updatePuzzleURL;
 
-function createPuzzle(height, width) {
-    const newPuzzle = generateCreationPuzzle(height, width);
+function createCreationPuzzle(height, width) {
+    return createPuzzle(height, width, addCreationCellEventListeners);
+}
+
+const addEventListenersToCounts = require('./modal.js').addEventListenersToCounts;
+const addModalCloseEventListener = require('./modal.js').addModalCloseEventListener;
+
+function createEnterPuzzle(height, width) {
+    return createPuzzle(height, width, puzzle => {
+        addEventListenersToCounts(puzzle);
+        addModalCloseEventListener(puzzle);
+    });
+}
+
+function createPuzzle(height, width, eventListenerFunction) {
+    const newPuzzle = generateEmptyPuzzle(height, width);
     renderPuzzle(newPuzzle);
-    addCreationCellEventListeners(newPuzzle);
+    eventListenerFunction(newPuzzle);
     updatePuzzleURL(newPuzzle);
     return newPuzzle;
 }
 
 module.exports = {
-    createPuzzle: createPuzzle
+    createCreationPuzzle: createCreationPuzzle,
+    createEnterPuzzle: createEnterPuzzle
 }

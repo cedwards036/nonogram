@@ -3,7 +3,7 @@
     <head>
         <title>Nonogram</title>
         <link rel="stylesheet" href="./styles/styles.css">
-        <script type="text/javascript" src="./scripts/create.js" async></script>
+        <script type="text/javascript" src="./scripts/enter.js" async></script>
     </head>
     <body>
         <div id="dimensions">
@@ -22,5 +22,18 @@
             <div id="cellGrid"></div>
         </div>
         <div id="puzzleURL"></div>
+        <div class="modal-background">
+            <div id="enterCountsModal" class="modal-body">
+                <span id="closeBtn" class="close">&times;</span>
+                <div class="modal-content">
+                    <form method="post" id="enterCountsForm">
+                        <label for="enterCountsInput">Enter the row/column counts separated by commas (e.g. 1,1,2):</label>
+                        <input type="text" id="enterCountsInput", name="enterCountsInput">
+                        <button type="submit">Save</button>
+                    </form>
+                    <div id="enterCountsError"></div>
+                </div>
+            </div>
+        </div>
     </body>
 </html>

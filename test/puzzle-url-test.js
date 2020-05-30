@@ -28,14 +28,14 @@ describe('makePuzzleString', () => {
 
 describe('parsePuzzleString', () => {
     it('parses the given string into an object with arrays of row counts and column counts', () => {
-        const expected = {rowCounts: [[2], [1], [2]], colCounts: [[2], [1, 1], [1]]};
+        const expected = {rowCountGroups: [[2], [1], [2]], colCountGroups: [[2], [1, 1], [1]]};
         assert.deepStrictEqual(expected, parsePuzzleString('2;1;2#2;1,1;1'));
     });
 });
 
 describe('buildPuzzleFromPuzzleString', () => {
     it('creates an empty puzzle with the row and column counts indicated by the puzzle string', () => {
-        const expected = {rowCounts: [[2], [1], [2], [3]], colCounts: [[2], [1, 1], [1]], board: [
+        const expected = {rowCountGroups: [[2], [1], [2], [3]], colCountGroups: [[2], [1, 1], [1]], board: [
             [STATES.EMPTY, STATES.EMPTY, STATES.EMPTY],
             [STATES.EMPTY, STATES.EMPTY, STATES.EMPTY,],
             [STATES.EMPTY, STATES.EMPTY, STATES.EMPTY,],

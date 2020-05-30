@@ -1,16 +1,18 @@
-const createPuzzle = require('./create-puzzle.js').createPuzzle;
+const clearPuzzle = require('./render-puzzle.js').clearPuzzle;
 
-function setPuzzleDimensions() {
-    const height = document.getElementById('yDimensionInput').value;
-    const width = document.getElementById('xDimensionInput').value;
-    if (dimensionsAreValid(width, height)) {
-        clearPuzzle();
-        createPuzzle(width, height);
-    } else {
-        resetDimensions();
-        alert('ERROR: invalid dimensions');
+function makePuzzleDimensionsSetter(createPuzzleFunction) {
+    return () => {
+        const height = document.getElementById('yDimensionInput').value;
+        const width = document.getElementById('xDimensionInput').value;
+        if (dimensionsAreValid(width, height)) {
+            clearPuzzle();
+            createPuzzleFunction(width, height);
+        } else {
+            resetDimensions();
+            alert('ERROR: invalid dimensions');
+        }
+        return false;
     }
-    return false;
 }
 
 function dimensionsAreValid(width, height) {
@@ -28,17 +30,11 @@ function dimensionsAreValid(width, height) {
     return isValidDimension(height) && isValidDimension(width)
 }
 
-function clearPuzzle() {
-    document.getElementById('cellGrid').innerHTML = '';
-    document.getElementById('colCounts').innerHTML = '';
-    document.getElementById('rowCounts').innerHTML = '';
-}
-
 function resetDimensions() {
-    document.getElementById('yDimensionInput').value = document.getElementById('rowCounts').childElementCount;
-    document.getElementById('xDimensionInput').value = document.getElementById('colCounts').childElementCount;
+    document.getElementById('yDimensionInput').value = document.getElementById('rowCountGroups').childElementCount;
+    document.getElementById('xDimensionInput').value = document.getElementById('colCountGroups').childElementCount;
 }
 
 module.exports = {
-    setPuzzleDimensions: setPuzzleDimensions
+    makePuzzleDimensionsSetter: makePuzzleDimensionsSetter
 }

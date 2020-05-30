@@ -1,13 +1,13 @@
 const generateSolvePuzzle = require('./puzzle.js').generateSolvePuzzle;
 
 function makePuzzleString(puzzle) {
-    const rowCounts = puzzle.rowCounts.map((rowCount) => {
-        return rowCount.join(',');
+    const rowCountGroups = puzzle.rowCountGroups.map((rowCountGroup) => {
+        return rowCountGroup.join(',');
     }).join(';');
-    const colCounts = puzzle.colCounts.map((colCount) => {
+    const colCountGroups = puzzle.colCountGroups.map((colCount) => {
         return colCount.join(',');
     }).join(';');
-    return rowCounts + '#' + colCounts;
+    return rowCountGroups + '#' + colCountGroups;
 }
 
 function makePuzzleURLQueryString(puzzle) {
@@ -23,15 +23,14 @@ function parsePuzzleString(puzzleString) {
         return countsStr.split(';').map(s => s.split(',').map(s => parseInt(s)));
     }
     const split = puzzleString.split('#');
-    const rowCounts = parseCounts(split[0]);
-    const colCounts = parseCounts(split[1]);
-    return {rowCounts: rowCounts, colCounts: colCounts};
-
+    const rowCountGroups = parseCounts(split[0]);
+    const colCountGroups = parseCounts(split[1]);
+    return {rowCountGroups: rowCountGroups, colCountGroups: colCountGroups};
 }
 
 function buildPuzzleFromPuzzleString(puzzleString) {
     const parsedCounts = parsePuzzleString(puzzleString);
-    return generateSolvePuzzle(parsedCounts.rowCounts, parsedCounts.colCounts);
+    return generateSolvePuzzle(parsedCounts.rowCountGroups, parsedCounts.colCountGroups);
 }
 
 function buildPuzzleFromQueryString(queryString) {

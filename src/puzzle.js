@@ -11,18 +11,18 @@ const MESSAGES = {
 
 const FSM = buildFSM();
 
-function generateSolvePuzzle(rowCounts, colCounts) {
-    const board = generateEmptyBoard(colCounts.length, rowCounts.length);
-    return {rowCounts: rowCounts, colCounts: colCounts, board: board};
+function generateSolvePuzzle(rowCountGroups, colCountGroups) {
+    const board = generateEmptyBoard(colCountGroups.length, rowCountGroups.length);
+    return {rowCountGroups: rowCountGroups, colCountGroups: colCountGroups, board: board};
 }
 
-function generateCreationPuzzle(width, height) {
-    const puzzle = {rowCounts: [], colCounts: []};
+function generateEmptyPuzzle(width, height) {
+    const puzzle = {rowCountGroups: [], colCountGroups: []};
     for (let i = 0; i < height; i++) {
-        puzzle.rowCounts.push([0])
+        puzzle.rowCountGroups.push([0])
     }
     for (let i = 0; i < width; i++) {
-        puzzle.colCounts.push([0])
+        puzzle.colCountGroups.push([0])
     }
     puzzle.board = generateEmptyBoard(width, height);
     return puzzle;
@@ -44,7 +44,7 @@ function generateEmptyBoard(width, height) {
 }
 
 function makePuzzleFrom2DArray(arr) {
-    const puzzle = generateCreationPuzzle(arr[0].length, arr.length);
+    const puzzle = generateEmptyPuzzle(arr[0].length, arr.length);
     for (let i = 0; i < arr.length; i++) {
         for (let j = 0; j < arr[0].length; j++) {
             if (arr[i][j] === 1) {
@@ -53,10 +53,10 @@ function makePuzzleFrom2DArray(arr) {
         }
     }
     for (let i = 0; i < arr.length; i++) {
-        updateRowCounts(puzzle, i);
+        updateRowCountGroup(puzzle, i);
     }
     for (let i = 0; i < arr[0].length; i++) {
-        updateColumnCounts(puzzle, i);
+        updateColumnCountGroup(puzzle, i);
     }
     return puzzle;
 }
@@ -84,12 +84,12 @@ function interactWithCell(msg, rowIdx, colIdx, puzzle) {
     return puzzle;
 }
 
-function updateColumnCounts(puzzle, colIdx) {
-    puzzle.colCounts[colIdx] = makeColumnCounts(puzzle, colIdx);
+function updateColumnCountGroup(puzzle, colIdx) {
+    puzzle.colCountGroups[colIdx] = makeColumnCountGroup(puzzle, colIdx);
     return puzzle;
 }
 
-function makeColumnCounts(puzzle, colIdx) {
+function makeColumnCountGroup(puzzle, colIdx) {
     const columnCounts = [];
     let i = 0;
     var curCount = 0;
@@ -111,13 +111,13 @@ function makeColumnCounts(puzzle, colIdx) {
     }
 }
 
-function updateRowCounts(puzzle, rowIdx) {
-    puzzle.rowCounts[rowIdx] = makeRowCounts(puzzle, rowIdx);
+function updateRowCountGroup(puzzle, rowIdx) {
+    puzzle.rowCountGroups[rowIdx] = makeRowCountGroup(puzzle, rowIdx);
     return puzzle;
 }
 
-function makeRowCounts(puzzle, rowIdx) {
-    const rowCounts = [];
+function makeRowCountGroup(puzzle, rowIdx) {
+    const rowCountGroups = [];
     let i = 0;
     var curCount = 0;
     while (i < puzzle.board[0].length) {
@@ -126,24 +126,24 @@ function makeRowCounts(puzzle, rowIdx) {
             i++;
         }
         if (curCount > 0) {
-            rowCounts.push(curCount);
+            rowCountGroups.push(curCount);
             curCount = 0;
         }
         i++;
     }
-    if (rowCounts.length === 0) {
+    if (rowCountGroups.length === 0) {
         return [0];
     } else {
-        return rowCounts;
+        return rowCountGroups;
     }
 }
 
 function puzzleIsSolved(puzzle) {
-    const rowsAreCorrect = puzzle.rowCounts.reduce((result, counts, rowIdx) => {
-        return result && arrEquals(makeRowCounts(puzzle, rowIdx), counts);
+    const rowsAreCorrect = puzzle.rowCountGroups.reduce((result, counts, rowIdx) => {
+        return result && arrEquals(makeRowCountGroup(puzzle, rowIdx), counts);
     }, true);
-    const colsAreCorrect = puzzle.colCounts.reduce((result, counts, colIdx) => {
-        return result && arrEquals(makeColumnCounts(puzzle, colIdx), counts);
+    const colsAreCorrect = puzzle.colCountGroups.reduce((result, counts, colIdx) => {
+        return result && arrEquals(makeColumnCountGroup(puzzle, colIdx), counts);
     }, true);
     return rowsAreCorrect && colsAreCorrect;
 }
@@ -165,11 +165,11 @@ function arrEquals(arr1, arr2) {
 
 module.exports = {
     generateSolvePuzzle: generateSolvePuzzle,
-    generateCreationPuzzle: generateCreationPuzzle,
+    generateEmptyPuzzle: generateEmptyPuzzle,
     generateEmptyBoard: generateEmptyBoard,
     interactWithCell: interactWithCell,
-    updateColumnCounts: updateColumnCounts,
-    updateRowCounts: updateRowCounts,
+    updateColumnCountGroup: updateColumnCountGroup,
+    updateRowCountGroup: updateRowCountGroup,
     makePuzzleFrom2DArray: makePuzzleFrom2DArray,
     puzzleIsSolved: puzzleIsSolved,
     STATES: STATES,

@@ -1,5 +1,11 @@
 const STATES = require('../puzzle.js').STATES
 
+function clearPuzzle() {
+    clearChildren(document.getElementById('cellGrid'));
+    clearChildren(document.getElementById('colCountGroups'));
+    clearChildren(document.getElementById('rowCountGroups'));
+}
+
 function renderPuzzle(puzzle) {
     renderCellGrid(puzzle);
     renderRowCounts(puzzle);
@@ -47,32 +53,32 @@ function updateCellStateClass(cell, stateClass) {
 }
 
 function renderRowCounts(puzzle) {
-    createCountsCollection(puzzle.rowCounts, document.getElementById('rowCounts'));
+    createCountsCollection(puzzle.rowCountGroups, document.getElementById('rowCountGroups'));
 }
 
 function renderColCounts(puzzle) {
-    createCountsCollection(puzzle.colCounts, document.getElementById('colCounts'));
+    createCountsCollection(puzzle.colCountGroups, document.getElementById('colCountGroups'));
 }
 
-function createCountsCollection(counts, parentDiv) {
-    counts.forEach(countsArr => {
-        parentDiv.appendChild(createLineCountsColumnDiv(countsArr));
+function createCountsCollection(countGroups, parentDiv) {
+    countGroups.forEach(countGroup => {
+        parentDiv.appendChild(createCountGroupDiv(countGroup));
     });
     return parentDiv;
 }
 
-function createLineCountsColumnDiv(lineCountsColumn) {
-    const columnDiv = document.createElement('div');
-    columnDiv.setAttribute('class', 'counts-col');
-    return updateLineCountsColumnDiv(columnDiv, lineCountsColumn);
+function createCountGroupDiv(countGroup) {
+    const countGroupDiv = document.createElement('div');
+    countGroupDiv.setAttribute('class', 'count-group');
+    return updateCountGroupDiv(countGroupDiv, countGroup);
 }
 
-function updateLineCountsColumnDiv(columnDiv, lineCountsColumn) {
-    clearChildren(columnDiv);
-    lineCountsColumn.forEach(count => {
-        columnDiv.appendChild(createCountDiv(count));
+function updateCountGroupDiv(countGroupDiv, countGroup) {
+    clearChildren(countGroupDiv);
+    countGroup.forEach(count => {
+        countGroupDiv.appendChild(createCountDiv(count));
     });
-    return columnDiv;
+    return countGroupDiv;
 }
 
 function clearChildren(element) {
@@ -90,7 +96,10 @@ function createCountDiv(count) {
 
 module.exports = {
     renderPuzzle: renderPuzzle,
-    updateLineCountsColumnDiv: updateLineCountsColumnDiv,
+    clearPuzzle: clearPuzzle,
+    renderRowCounts: renderRowCounts,
+    renderColCounts: renderRowCounts,
+    updateCountGroupDiv: updateCountGroupDiv,
     updateCellStateClass: updateCellStateClass,
     getCellClass: getCellClass
 }

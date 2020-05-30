@@ -1,28 +1,28 @@
 const assert = require('assert');
 const generateEmptyBoard = require('../src/puzzle.js').generateEmptyBoard;
-const generateCreationPuzzle = require('../src/puzzle.js').generateCreationPuzzle;
+const generateEmptyPuzzle = require('../src/puzzle.js').generateEmptyPuzzle;
 const generateSolvePuzzle = require('../src/puzzle.js').generateSolvePuzzle;
 const interactWithCell = require('../src/puzzle.js').interactWithCell;
-const updateColumnCounts = require('../src/puzzle.js').updateColumnCounts;
-const updateRowCounts = require('../src/puzzle.js').updateRowCounts;
+const updateColumnCountGroup = require('../src/puzzle.js').updateColumnCountGroup;
+const updateRowCountGroup = require('../src/puzzle.js').updateRowCountGroup;
 const makePuzzleFrom2DArray = require('../src/puzzle.js').makePuzzleFrom2DArray;
 const puzzleIsSolved = require('../src/puzzle.js').puzzleIsSolved;
 const STATES = require('../src/puzzle.js').STATES;
 const MESSAGES = require('../src/puzzle.js').MESSAGES;
 
-describe('generateCreationPuzzle', () => {
-    it('should create a colCounts array containing m 0 count nodes', () => {
-        const puzzle = generateCreationPuzzle(3, 4);
-        assert.deepEqual([[0], [0], [0]], puzzle.colCounts); 
+describe('generateEmptyPuzzle', () => {
+    it('should create a colCountGroups array containing m 0 count nodes', () => {
+        const puzzle = generateEmptyPuzzle(3, 4);
+        assert.deepEqual([[0], [0], [0]], puzzle.colCountGroups); 
     });
 
-    it('should create a rowCounts array containing n 0 count nodes', () => {
-        const puzzle = generateCreationPuzzle(3, 4);
-        assert.deepEqual([[0], [0], [0], [0]], puzzle.rowCounts); 
+    it('should create a rowCountGroups array containing n 0 count nodes', () => {
+        const puzzle = generateEmptyPuzzle(3, 4);
+        assert.deepEqual([[0], [0], [0], [0]], puzzle.rowCountGroups); 
     });
 
     it('should create an m x n puzzle board', () => {
-        const puzzle = generateCreationPuzzle(1, 2);
+        const puzzle = generateEmptyPuzzle(1, 2);
         assert.deepEqual([[STATES.EMPTY], [STATES.EMPTY]], puzzle.board); 
     });
 });
@@ -45,22 +45,22 @@ describe('generateCreationBoard', () => {
     });
 });
 
-describe('updateColumnCounts', () => {
+describe('updateColumnCountGroup', () => {
     var puzzle;
     beforeEach(() => {
-        puzzle = generateCreationPuzzle(6, 6);
+        puzzle = generateEmptyPuzzle(6, 6);
     });
 
     it('should update to 0 if nothing is filled in the line', () => {
-        puzzle = updateColumnCounts(puzzle, 0);
-        assert.deepEqual([0], puzzle.colCounts[0]);
+        puzzle = updateColumnCountGroup(puzzle, 0);
+        assert.deepEqual([0], puzzle.colCountGroups[0]);
     });  
 
     it('should contain a single number when there is one contiguous filled stretch', () => {
         puzzle = interactWithCell(MESSAGES.FILL, 0, 0, puzzle);
         puzzle = interactWithCell(MESSAGES.FILL, 1, 0, puzzle);
-        puzzle = updateColumnCounts(puzzle, 0);
-        assert.deepEqual([2], puzzle.colCounts[0]);
+        puzzle = updateColumnCountGroup(puzzle, 0);
+        assert.deepEqual([2], puzzle.colCountGroups[0]);
     }); 
 
     it('should contain counts of contiguous filled stretches in order', () => {
@@ -68,27 +68,27 @@ describe('updateColumnCounts', () => {
         puzzle = interactWithCell(MESSAGES.FILL, 2, 3, puzzle);
         puzzle = interactWithCell(MESSAGES.FILL, 3, 3, puzzle);
         puzzle = interactWithCell(MESSAGES.FILL, 5, 3, puzzle);
-        puzzle = updateColumnCounts(puzzle, 3);
-        assert.deepEqual([1, 2, 1], puzzle.colCounts[3]);
+        puzzle = updateColumnCountGroup(puzzle, 3);
+        assert.deepEqual([1, 2, 1], puzzle.colCountGroups[3]);
     });
 });
 
-describe('updateRowCounts', () => {
+describe('updateRowCountGroup', () => {
     var puzzle;
     beforeEach(() => {
-        puzzle = generateCreationPuzzle(6, 6);
+        puzzle = generateEmptyPuzzle(6, 6);
     });
 
     it('should update to 0 if nothing is filled in the line', () => {
-        puzzle = updateRowCounts(puzzle, 0);
-        assert.deepEqual([0], puzzle.rowCounts[0]);
+        puzzle = updateRowCountGroup(puzzle, 0);
+        assert.deepEqual([0], puzzle.rowCountGroups[0]);
     });  
 
     it('should contain a single number when there is one contiguous filled stretch', () => {
         puzzle = interactWithCell(MESSAGES.FILL, 0, 0, puzzle);
         puzzle = interactWithCell(MESSAGES.FILL, 0, 1, puzzle);
-        puzzle = updateRowCounts(puzzle, 0);
-        assert.deepEqual([2], puzzle.rowCounts[0]);
+        puzzle = updateRowCountGroup(puzzle, 0);
+        assert.deepEqual([2], puzzle.rowCountGroups[0]);
     }); 
 
     it('should contain counts of contiguous filled stretches in order', () => {
@@ -96,15 +96,15 @@ describe('updateRowCounts', () => {
         puzzle = interactWithCell(MESSAGES.FILL, 3, 2, puzzle);
         puzzle = interactWithCell(MESSAGES.FILL, 3, 3, puzzle);
         puzzle = interactWithCell(MESSAGES.FILL, 3, 5, puzzle);
-        puzzle = updateRowCounts(puzzle, 3);
-        assert.deepEqual([1, 2, 1], puzzle.rowCounts[3]);
+        puzzle = updateRowCountGroup(puzzle, 3);
+        assert.deepEqual([1, 2, 1], puzzle.rowCountGroups[3]);
     });
 });
 
 describe('interactWithCell', () => {
     var puzzle;
     beforeEach(() => {
-        puzzle = generateCreationPuzzle(2, 2);
+        puzzle = generateEmptyPuzzle(2, 2);
     });
 
     it('should be filled when sent the "fill" message while empty', () => {
@@ -138,14 +138,14 @@ describe('interactWithCell', () => {
 
 describe('generateSolvePuzzle', () => {
     it('should create an empty puzzle with column counts and row counts derived from the input', () => {
-        const rowCounts = [[1, 1], [3], [2]];
-        const colCounts = [[0], [2], [1]];
-        const expected = {rowCounts: rowCounts, colCounts: colCounts, board: [
+        const rowCountGroups = [[1, 1], [3], [2]];
+        const colCountGroups = [[0], [2], [1]];
+        const expected = {rowCountGroups: rowCountGroups, colCountGroups: colCountGroups, board: [
             [STATES.EMPTY, STATES.EMPTY, STATES.EMPTY],
             [STATES.EMPTY, STATES.EMPTY, STATES.EMPTY,],
             [STATES.EMPTY, STATES.EMPTY, STATES.EMPTY,]
         ]};
-        assert.deepEqual(expected, generateSolvePuzzle(rowCounts, colCounts));
+        assert.deepEqual(expected, generateSolvePuzzle(rowCountGroups, colCountGroups));
     });
 });
 

@@ -1,9 +1,9 @@
 const interactWithCell = require('../puzzle.js').interactWithCell
-const updateColumnCounts = require('../puzzle.js').updateColumnCounts;
-const updateRowCounts = require('../puzzle.js').updateRowCounts;
+const updateColumnCountGroup = require('../puzzle.js').updateColumnCountGroup;
+const updateRowCountGroup = require('../puzzle.js').updateRowCountGroup;
 const puzzleIsSolved = require('../puzzle.js').puzzleIsSolved;
 const MESSAGES = require('../puzzle.js').MESSAGES
-const updateLineCountsColumnDiv = require('./render-puzzle.js').updateLineCountsColumnDiv;
+const updateCountGroupDiv = require('./render-puzzle.js').updateCountGroupDiv;
 const updateCellStateClass = require('./render-puzzle.js').updateCellStateClass
 const getCellClass = require('./render-puzzle.js').getCellClass;
 const updatePuzzleURL = require('./render-puzzle-url.js').updatePuzzleURL;
@@ -49,25 +49,25 @@ function handleCreationCellClick(puzzle, cell, message) {
 }
 
 function updateColumnCountDivs(puzzle, colIdx) {
-    updateColumnCounts(puzzle, colIdx);
-    const colCountsDiv = getNthColumnCountsCol(colIdx);
-    updateLineCountsColumnDiv(colCountsDiv, puzzle.colCounts[colIdx]);
+    updateColumnCountGroup(puzzle, colIdx);
+    const colCountGroupsDiv = getNthColumnCountsCol(colIdx);
+    updateCountGroupDiv(colCountGroupsDiv, puzzle.colCountGroups[colIdx]);
 }
 
 function getNthColumnCountsCol(n) {
-    return document.getElementById('colCounts')
-                   .getElementsByClassName('counts-col')[n];
+    return document.getElementById('colCountGroups')
+                   .getElementsByClassName('count-group')[n];
 }
 
 function updateRowCountDivs(puzzle, rowIdx) {
-    updateRowCounts(puzzle, rowIdx);
-    const rowCountsDiv = getNthRowCountsCol(rowIdx);
-    updateLineCountsColumnDiv(rowCountsDiv, puzzle.rowCounts[rowIdx]);
+    updateRowCountGroup(puzzle, rowIdx);
+    const rowCountGroupsDiv = getNthRowCountsCol(rowIdx);
+    updateCountGroupDiv(rowCountGroupsDiv, puzzle.rowCountGroups[rowIdx]);
 }
 
 function getNthRowCountsCol(n) {
-    return document.getElementById('rowCounts')
-                   .getElementsByClassName('counts-col')[n];
+    return document.getElementById('rowCountGroups')
+                   .getElementsByClassName('count-group')[n];
 }
 
 module.exports = {
