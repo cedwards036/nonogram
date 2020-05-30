@@ -70,6 +70,7 @@ function openColumnModal(puzzle, countGroupDiv, idx) {
 }
 
 function closeModal() {
+    hideError();
     modalBackground.style.display = 'none';
 }
 
