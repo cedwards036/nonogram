@@ -110,3 +110,11 @@
     display: none;
     color: red;
 }
+
+.enter-count-groups {
+    cursor: pointer;
+}
+
+.interactable-grid {
+    cursor: pointer;
+}
