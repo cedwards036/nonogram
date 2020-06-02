@@ -1,3 +1,7 @@
+#puzzleContainer {
+    text-align: center;
+}
+
 #puzzle {
     display: inline-grid;
     grid-template-columns: auto auto;

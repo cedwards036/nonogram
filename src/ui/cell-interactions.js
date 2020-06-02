@@ -9,23 +9,65 @@ const getCellClass = require('./render-puzzle.js').getCellClass;
 const updatePuzzleURL = require('./render-puzzle-url.js').updatePuzzleURL;
 
 function addCreationCellEventListeners(puzzle) {
+    var mouseIsDown = false;
     Array.from(document.getElementsByClassName('cell')).forEach(cell => {
-        cell.addEventListener('click', () => {
-            handleCreationCellClick(puzzle, cell, MESSAGES.FILL)
+        cell.addEventListener('mousedown', (e) => {
+            e.preventDefault();
+            handleCreationCellClick(puzzle, cell, MESSAGES.FILL);
+            mouseIsDown = true;
+        });
+        cell.addEventListener('mouseenter', () => {
+            if (mouseIsDown) {
+                handleCreationCellClick(puzzle, cell, MESSAGES.FILL);
+            }
         });
     }); 
+    const puzzleDiv = document.getElementById('puzzle');
+    puzzleDiv.addEventListener('mouseleave', () => {
+        mouseIsDown = false;
+    });
+    puzzleDiv.addEventListener('mouseup', () => {
+        mouseIsDown = false;
+    });
+    puzzleDiv.addEventListener('contextmenu', (e) => {
+        e.preventDefault();
+    });
 }
 
 function addSolveCellEventListeners(puzzle) {
+    var leftMouseIsDown = false;
+    var rightMouseIsDown = false;
     Array.from(document.getElementsByClassName('cell')).forEach(cell => {
-        cell.addEventListener('click', () => {
-            handleSolveCellClick(puzzle, cell, MESSAGES.FILL)
-        });
-        cell.addEventListener('contextmenu', (e) => {
-            handleSolveCellClick(puzzle, cell, MESSAGES.BLANK)
+        cell.addEventListener('mousedown', (e) => {
             e.preventDefault();
+            if (e.button == 0) {
+                handleSolveCellClick(puzzle, cell, MESSAGES.FILL);
+                leftMouseIsDown = true;
+            } else if (e.button == 2) {
+                handleSolveCellClick(puzzle, cell, MESSAGES.BLANK);
+                rightMouseIsDown = true;
+            }
+        });
+        cell.addEventListener('mouseenter', (e) => {
+            if (leftMouseIsDown) {
+                handleSolveCellClick(puzzle, cell, MESSAGES.FILL);
+            } else if (rightMouseIsDown) {
+                handleSolveCellClick(puzzle, cell, MESSAGES.BLANK);
+            }
         });
     }); 
+    const puzzleDiv = document.getElementById('puzzle');
+    puzzleDiv.addEventListener('mouseleave', () => {
+        leftMouseIsDown = false;
+        rightMouseIsDown = false;
+    });
+    puzzleDiv.addEventListener('mouseup', () => {
+        leftMouseIsDown = false;
+        rightMouseIsDown = false;
+    });
+    puzzleDiv.addEventListener('contextmenu', (e) => {
+        e.preventDefault();
+    });
 }
 
 function handleSolveCellClick(puzzle, cell, message) {
