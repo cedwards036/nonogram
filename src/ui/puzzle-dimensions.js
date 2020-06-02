@@ -2,11 +2,18 @@ const clearPuzzle = require('./render-puzzle.js').clearPuzzle;
 
 function makePuzzleDimensionsSetter(createPuzzleFunction) {
     return () => {
-        const height = document.getElementById('yDimensionInput').value;
-        const width = document.getElementById('xDimensionInput').value;
+        const yInput = document.getElementById('yDimensionInput');
+        const xInput = document.getElementById('xDimensionInput');
+        const height = yInput.value;
+        const width = xInput.value;
         if (dimensionsAreValid(width, height)) {
+            const intHeight = parseInt(height);
+            const intWidth = parseInt(width);
             clearPuzzle();
-            createPuzzleFunction(width, height);
+            createPuzzleFunction(intWidth, intHeight);
+            //reassign the integer values to the input to remove any leading zeros
+            yInput.value = intHeight;
+            xInput.value = intWidth;
         } else {
             resetDimensions();
             alert('ERROR: invalid dimensions');
