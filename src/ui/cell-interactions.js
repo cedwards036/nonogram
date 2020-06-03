@@ -22,14 +22,10 @@ function addCreationCellEventListeners(puzzle) {
             }
         });
     }); 
-    const puzzleDiv = document.getElementById('puzzle');
-    puzzleDiv.addEventListener('mouseleave', () => {
+    document.getElementsByTagName('body')[0].addEventListener('mouseup', () => {
         mouseIsDown = false;
     });
-    puzzleDiv.addEventListener('mouseup', () => {
-        mouseIsDown = false;
-    });
-    puzzleDiv.addEventListener('contextmenu', (e) => {
+    document.getElementById('puzzle').addEventListener('contextmenu', (e) => {
         e.preventDefault();
     });
 }
@@ -56,16 +52,11 @@ function addSolveCellEventListeners(puzzle) {
             }
         });
     }); 
-    const puzzleDiv = document.getElementById('puzzle');
-    puzzleDiv.addEventListener('mouseleave', () => {
+    document.getElementsByTagName('body')[0].addEventListener('mouseup', () => {
         leftMouseIsDown = false;
         rightMouseIsDown = false;
     });
-    puzzleDiv.addEventListener('mouseup', () => {
-        leftMouseIsDown = false;
-        rightMouseIsDown = false;
-    });
-    puzzleDiv.addEventListener('contextmenu', (e) => {
+    document.getElementById('puzzle').addEventListener('contextmenu', (e) => {
         e.preventDefault();
     });
 }
