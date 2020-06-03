@@ -3,6 +3,7 @@ const generateEmptyBoard = require('../src/puzzle.js').generateEmptyBoard;
 const generateEmptyPuzzle = require('../src/puzzle.js').generateEmptyPuzzle;
 const generateSolvePuzzle = require('../src/puzzle.js').generateSolvePuzzle;
 const interactWithCell = require('../src/puzzle.js').interactWithCell;
+const makeInteractionFunction = require('../src/puzzle.js').makeInteractionFunction;
 const updateColumnCountGroup = require('../src/puzzle.js').updateColumnCountGroup;
 const updateRowCountGroup = require('../src/puzzle.js').updateRowCountGroup;
 const makePuzzleFrom2DArray = require('../src/puzzle.js').makePuzzleFrom2DArray;
@@ -133,6 +134,25 @@ describe('interactWithCell', () => {
     it('should be empty when sent the "fill" message while blank', () => {
         puzzle = interactWithCell(MESSAGES.BLANK, 0, 0, puzzle);
         assert.equal(STATES.EMPTY, interactWithCell(MESSAGES.FILL, 0, 0, puzzle).board[0][0]);
+    });
+});
+
+describe('makeInteractionFunction', () => {
+
+    it('should create a reusable function that interacts with the board if the current cell state matches the original cell state', () => {
+        let puzzle = generateEmptyPuzzle(2, 2);
+        const interact = makeInteractionFunction(MESSAGES.FILL, 0, 0, puzzle);
+        puzzle = interact(0, 0, puzzle);
+        puzzle = interact(0, 1, puzzle);
+        assert.equal(STATES.FILLED, puzzle.board[0][0]);
+        assert.equal(STATES.FILLED, puzzle.board[0][1]);
+    });
+
+    it('should create a reusable function that does not interact with the board if the current cell state does not match the original cell state', () => {
+        let puzzle = makePuzzleFrom2DArray([[1, 0], [1, 1]]);
+        const interact = makeInteractionFunction(MESSAGES.FILL, 0, 0, puzzle);
+        puzzle = interact(0, 1, puzzle);
+        assert.equal(STATES.EMPTY, puzzle.board[0][1]);
     });
 });
 

@@ -84,6 +84,16 @@ function interactWithCell(msg, rowIdx, colIdx, puzzle) {
     return puzzle;
 }
 
+function makeInteractionFunction(msg, rowIdx, colIdx, puzzle) {
+    const originalCellState = puzzle.board[rowIdx][colIdx];
+    return (rowIdx, colIdx, puzzle) => {
+        if (puzzle.board[rowIdx][colIdx] === originalCellState) {
+            interactWithCell(msg, rowIdx, colIdx, puzzle);
+        }
+        return puzzle;
+    }
+}
+
 function updateColumnCountGroup(puzzle, colIdx) {
     puzzle.colCountGroups[colIdx] = makeColumnCountGroup(puzzle, colIdx);
     return puzzle;
@@ -168,6 +178,7 @@ module.exports = {
     generateEmptyPuzzle: generateEmptyPuzzle,
     generateEmptyBoard: generateEmptyBoard,
     interactWithCell: interactWithCell,
+    makeInteractionFunction: makeInteractionFunction,
     updateColumnCountGroup: updateColumnCountGroup,
     updateRowCountGroup: updateRowCountGroup,
     makePuzzleFrom2DArray: makePuzzleFrom2DArray,

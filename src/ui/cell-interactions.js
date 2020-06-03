@@ -1,4 +1,4 @@
-const interactWithCell = require('../puzzle.js').interactWithCell
+const makeInteractionFunction = require('../puzzle.js').makeInteractionFunction;
 const updateColumnCountGroup = require('../puzzle.js').updateColumnCountGroup;
 const updateRowCountGroup = require('../puzzle.js').updateRowCountGroup;
 const puzzleIsSolved = require('../puzzle.js').puzzleIsSolved;
@@ -9,16 +9,26 @@ const getCellClass = require('./render-puzzle.js').getCellClass;
 const updatePuzzleURL = require('./render-puzzle-url.js').updatePuzzleURL;
 
 function addCreationCellEventListeners(puzzle) {
-    var mouseIsDown = false;
+    addCellEventListeners(puzzle, makeCreationInteractionFunction, handleCreationCellClick);
+}
+
+function addSolveCellEventListeners(puzzle) {
+    addCellEventListeners(puzzle, makeSolveInteractionFunction, handleSolveCellClick);
+}
+
+function addCellEventListeners(puzzle, interactionFunctionMaker, clickHandler) {
+    let mouseIsDown = false;
+    let interactionFunction = () => {};
     Array.from(document.getElementsByClassName('cell')).forEach(cell => {
         cell.addEventListener('mousedown', (e) => {
             e.preventDefault();
-            handleCreationCellClick(puzzle, cell, MESSAGES.FILL);
+            interactionFunction = interactionFunctionMaker(puzzle, cell, e);
+            clickHandler(puzzle, cell, interactionFunction);
             mouseIsDown = true;
         });
         cell.addEventListener('mouseenter', () => {
             if (mouseIsDown) {
-                handleCreationCellClick(puzzle, cell, MESSAGES.FILL);
+                clickHandler(puzzle, cell, interactionFunction);
             }
         });
     }); 
@@ -30,55 +40,45 @@ function addCreationCellEventListeners(puzzle) {
     });
 }
 
-function addSolveCellEventListeners(puzzle) {
-    var leftMouseIsDown = false;
-    var rightMouseIsDown = false;
-    Array.from(document.getElementsByClassName('cell')).forEach(cell => {
-        cell.addEventListener('mousedown', (e) => {
-            e.preventDefault();
-            if (e.button == 0) {
-                handleSolveCellClick(puzzle, cell, MESSAGES.FILL);
-                leftMouseIsDown = true;
-            } else if (e.button == 2) {
-                handleSolveCellClick(puzzle, cell, MESSAGES.BLANK);
-                rightMouseIsDown = true;
-            }
-        });
-        cell.addEventListener('mouseenter', (e) => {
-            if (leftMouseIsDown) {
-                handleSolveCellClick(puzzle, cell, MESSAGES.FILL);
-            } else if (rightMouseIsDown) {
-                handleSolveCellClick(puzzle, cell, MESSAGES.BLANK);
-            }
-        });
-    }); 
-    document.getElementsByTagName('body')[0].addEventListener('mouseup', () => {
-        leftMouseIsDown = false;
-        rightMouseIsDown = false;
-    });
-    document.getElementById('puzzle').addEventListener('contextmenu', (e) => {
-        e.preventDefault();
-    });
-}
-
-function handleSolveCellClick(puzzle, cell, message) {
+function handleSolveCellClick(puzzle, cell, interactionFunction) {
     const rowIdx = cell.getAttribute('rowIdx');
     const colIdx = cell.getAttribute('colIdx');
-    interactWithCell(message, rowIdx, colIdx, puzzle);
+    interactionFunction(rowIdx, colIdx, puzzle);
     updateCellStateClass(cell, getCellClass(puzzle.board[rowIdx][colIdx]));
     if (puzzleIsSolved(puzzle)) {
         alert('You did it!')
     }
 }
 
-function handleCreationCellClick(puzzle, cell, message) {
+function handleCreationCellClick(puzzle, cell, interactionFunction) {
     const rowIdx = cell.getAttribute('rowIdx');
     const colIdx = cell.getAttribute('colIdx');
-    interactWithCell(message, rowIdx, colIdx, puzzle);
+    interactionFunction(rowIdx, colIdx, puzzle);
     updateColumnCountDivs(puzzle, colIdx);
     updateRowCountDivs(puzzle, rowIdx);
     updateCellStateClass(cell, getCellClass(puzzle.board[rowIdx][colIdx]));
     updatePuzzleURL(puzzle);
+}
+
+
+function makeCreationInteractionFunction(puzzle, cell, event) {
+    return makeCellInteractionFunction(puzzle, cell, MESSAGES.FILL);
+}
+
+function makeSolveInteractionFunction(puzzle, cell, event) {
+    if (event.button == 0) {
+        return makeCellInteractionFunction(puzzle, cell, MESSAGES.FILL);
+    } else if (event.button == 2) {
+        return makeCellInteractionFunction(puzzle, cell, MESSAGES.BLANK);
+    } else {
+        return (rowIdx, colIdx, puzzle) => puzzle;
+    }
+}
+
+function makeCellInteractionFunction(puzzle, cell, message) {
+    const rowIdx = cell.getAttribute('rowIdx');
+    const colIdx = cell.getAttribute('colIdx');
+    return makeInteractionFunction(message, rowIdx, colIdx, puzzle);
 }
 
 function updateColumnCountDivs(puzzle, colIdx) {
