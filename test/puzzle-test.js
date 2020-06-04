@@ -2,7 +2,8 @@ const assert = require('assert');
 const generateEmptyBoard = require('../src/puzzle.js').generateEmptyBoard;
 const generateEmptyPuzzle = require('../src/puzzle.js').generateEmptyPuzzle;
 const generateSolvePuzzle = require('../src/puzzle.js').generateSolvePuzzle;
-const interactWithCell = require('../src/puzzle.js').interactWithCell;
+const setCellState = require('../src/puzzle.js').setCellState;
+const fillCell = require('../src/puzzle.js').fillCell;
 const makeInteractionFunction = require('../src/puzzle.js').makeInteractionFunction;
 const updateColumnCountGroup = require('../src/puzzle.js').updateColumnCountGroup;
 const updateRowCountGroup = require('../src/puzzle.js').updateRowCountGroup;
@@ -58,17 +59,17 @@ describe('updateColumnCountGroup', () => {
     });  
 
     it('should contain a single number when there is one contiguous filled stretch', () => {
-        puzzle = interactWithCell(MESSAGES.FILL, 0, 0, puzzle);
-        puzzle = interactWithCell(MESSAGES.FILL, 1, 0, puzzle);
+        puzzle = fillCell(0, 0, puzzle);
+        puzzle = fillCell(1, 0, puzzle);
         puzzle = updateColumnCountGroup(puzzle, 0);
         assert.deepEqual([2], puzzle.colCountGroups[0]);
     }); 
 
     it('should contain counts of contiguous filled stretches in order', () => {
-        puzzle = interactWithCell(MESSAGES.FILL, 0, 3, puzzle);
-        puzzle = interactWithCell(MESSAGES.FILL, 2, 3, puzzle);
-        puzzle = interactWithCell(MESSAGES.FILL, 3, 3, puzzle);
-        puzzle = interactWithCell(MESSAGES.FILL, 5, 3, puzzle);
+        puzzle = fillCell(0, 3, puzzle);
+        puzzle = fillCell(2, 3, puzzle);
+        puzzle = fillCell(3, 3, puzzle);
+        puzzle = fillCell(5, 3, puzzle);
         puzzle = updateColumnCountGroup(puzzle, 3);
         assert.deepEqual([1, 2, 1], puzzle.colCountGroups[3]);
     });
@@ -86,62 +87,38 @@ describe('updateRowCountGroup', () => {
     });  
 
     it('should contain a single number when there is one contiguous filled stretch', () => {
-        puzzle = interactWithCell(MESSAGES.FILL, 0, 0, puzzle);
-        puzzle = interactWithCell(MESSAGES.FILL, 0, 1, puzzle);
+        puzzle = fillCell(0, 0, puzzle);
+        puzzle = fillCell(0, 1, puzzle);
         puzzle = updateRowCountGroup(puzzle, 0);
         assert.deepEqual([2], puzzle.rowCountGroups[0]);
     }); 
 
     it('should contain counts of contiguous filled stretches in order', () => {
-        puzzle = interactWithCell(MESSAGES.FILL, 3, 0, puzzle);
-        puzzle = interactWithCell(MESSAGES.FILL, 3, 2, puzzle);
-        puzzle = interactWithCell(MESSAGES.FILL, 3, 3, puzzle);
-        puzzle = interactWithCell(MESSAGES.FILL, 3, 5, puzzle);
+        puzzle = fillCell(3, 0, puzzle);
+        puzzle = fillCell(3, 2, puzzle);
+        puzzle = fillCell(3, 3, puzzle);
+        puzzle = fillCell(3, 5, puzzle);
         puzzle = updateRowCountGroup(puzzle, 3);
         assert.deepEqual([1, 2, 1], puzzle.rowCountGroups[3]);
     });
 });
 
-describe('interactWithCell', () => {
-    var puzzle;
-    beforeEach(() => {
-        puzzle = generateEmptyPuzzle(2, 2);
+describe('setCellState', () => {
+    it('sets the cell state to the given new state if the cell is empty', () => {
+        assert.equal('some state', setCellState('some state', 0, 0, generateEmptyPuzzle(2, 2)).board[0][0]);
     });
 
-    it('should be filled when sent the "fill" message while empty', () => {
-        assert.equal(STATES.FILLED, interactWithCell(MESSAGES.FILL, 0, 0, puzzle).board[0][0]);
-    });
-
-    it('should be empty when sent the "fill" message while filled', () => {
-        puzzle = interactWithCell(MESSAGES.FILL, 0, 0, puzzle);
-        assert.equal(STATES.EMPTY, interactWithCell(MESSAGES.FILL, 0, 0, puzzle).board[0][0]);
-    });
-
-    it('should be marked blank when sent the "blank" message while empty', () => {
-        assert.equal(STATES.BLANK, interactWithCell(MESSAGES.BLANK, 1, 0, puzzle).board[1][0]);
-    });
-
-    it('should be empty when sent the "blank" message while blank', () => {
-        puzzle = interactWithCell(MESSAGES.BLANK, 1, 1, puzzle);
-        assert.equal(STATES.EMPTY, interactWithCell(MESSAGES.BLANK, 1, 1, puzzle).board[0][0]);
-    });
-
-    it('should be empty when sent the "blank" message while filled', () => {
-        puzzle = interactWithCell(MESSAGES.FILL, 1, 1, puzzle);
-        assert.equal(STATES.EMPTY, interactWithCell(MESSAGES.BLANK, 1, 1, puzzle).board[0][0]);
-    });
-
-    it('should be empty when sent the "fill" message while blank', () => {
-        puzzle = interactWithCell(MESSAGES.BLANK, 0, 0, puzzle);
-        assert.equal(STATES.EMPTY, interactWithCell(MESSAGES.FILL, 0, 0, puzzle).board[0][0]);
+    it('sets the cell state to empty if the cell is not already empty', () => {
+        let puzzle = generateEmptyPuzzle(2, 2);
+        setCellState('some state', 1, 0, puzzle)
+        assert.equal(STATES.EMPTY, setCellState('some state', 1, 0, puzzle).board[1][0]);
     });
 });
 
 describe('makeInteractionFunction', () => {
-
     it('should create a reusable function that interacts with the board if the current cell state matches the original cell state', () => {
         let puzzle = generateEmptyPuzzle(2, 2);
-        const interact = makeInteractionFunction(MESSAGES.FILL, 0, 0, puzzle);
+        const interact = makeInteractionFunction(fillCell, 0, 0, puzzle);
         puzzle = interact(0, 0, puzzle);
         puzzle = interact(0, 1, puzzle);
         assert.equal(STATES.FILLED, puzzle.board[0][0]);
@@ -150,7 +127,7 @@ describe('makeInteractionFunction', () => {
 
     it('should create a reusable function that does not interact with the board if the current cell state does not match the original cell state', () => {
         let puzzle = makePuzzleFrom2DArray([[1, 0], [1, 1]]);
-        const interact = makeInteractionFunction(MESSAGES.FILL, 0, 0, puzzle);
+        const interact = makeInteractionFunction(fillCell, 0, 0, puzzle);
         puzzle = interact(0, 1, puzzle);
         assert.equal(STATES.EMPTY, puzzle.board[0][1]);
     });
@@ -195,7 +172,7 @@ describe('puzzleIsSolved', () => {
             [1, 1, 0, 0],
             [1, 1, 1, 0]
         ]);
-        puzzle = interactWithCell(MESSAGES.BLANK, 0, 0, puzzle);
+        puzzle = fillCell(0, 1, puzzle);
         assert.equal(false, puzzleIsSolved(puzzle));
     });
 });

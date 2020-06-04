@@ -1,15 +1,9 @@
 const STATES = {
     EMPTY: 'empty',
+    BLANK: 'blank',
     FILLED: 'filled',
-    BLANK: 'blank'
+    MARKED: 'marked'
 }
-
-const MESSAGES = {
-    FILL: 'fill',
-    BLANK: 'blank'
-}
-
-const FSM = buildFSM();
 
 function generateSolvePuzzle(rowCountGroups, colCountGroups) {
     const board = generateEmptyBoard(colCountGroups.length, rowCountGroups.length);
@@ -48,7 +42,7 @@ function makePuzzleFrom2DArray(arr) {
     for (let i = 0; i < arr.length; i++) {
         for (let j = 0; j < arr[0].length; j++) {
             if (arr[i][j] === 1) {
-                interactWithCell(MESSAGES.FILL, i, j, puzzle);
+                fillCell(i, j, puzzle);
             }
         }
     }
@@ -61,34 +55,28 @@ function makePuzzleFrom2DArray(arr) {
     return puzzle;
 }
 
-function buildFSM() {
-    function addStateTransition(finiteStateMachine, givenState, message, newState) {
-        if (!finiteStateMachine.hasOwnProperty(givenState)) {
-            finiteStateMachine[givenState] = {};
-        }
-        finiteStateMachine[givenState][message] = newState
-    }
-    const finiteStateMachine = {};
-    addStateTransition(finiteStateMachine, STATES.EMPTY, MESSAGES.FILL, STATES.FILLED);
-    addStateTransition(finiteStateMachine, STATES.EMPTY, MESSAGES.BLANK, STATES.BLANK);
-    addStateTransition(finiteStateMachine, STATES.FILLED, MESSAGES.FILL, STATES.EMPTY);
-    addStateTransition(finiteStateMachine, STATES.FILLED, MESSAGES.BLANK, STATES.EMPTY);
-    addStateTransition(finiteStateMachine, STATES.BLANK, MESSAGES.BLANK, STATES.EMPTY);
-    addStateTransition(finiteStateMachine, STATES.BLANK, MESSAGES.FILL, STATES.EMPTY);
-    return finiteStateMachine;
+const fillCell = makeCellInteraction(STATES.FILLED);
+const blankCell = makeCellInteraction(STATES.BLANK);
+const markCell = makeCellInteraction(STATES.MARKED);
+
+function makeCellInteraction(state) {
+    return (rowIdx, colIdx, puzzle) => setCellState(state, rowIdx, colIdx, puzzle);
 }
 
-function interactWithCell(msg, rowIdx, colIdx, puzzle) {
-    const currentCellState = puzzle.board[rowIdx][colIdx];
-    puzzle.board[rowIdx][colIdx] = FSM[currentCellState][msg];
+function setCellState(newState, rowIdx, colIdx, puzzle) {
+    if (puzzle.board[rowIdx][colIdx] === STATES.EMPTY) {
+        puzzle.board[rowIdx][colIdx] = newState;
+    } else {
+        puzzle.board[rowIdx][colIdx] = STATES.EMPTY;
+    }
     return puzzle;
 }
 
-function makeInteractionFunction(msg, rowIdx, colIdx, puzzle) {
+function makeInteractionFunction(interaction, rowIdx, colIdx, puzzle) {
     const originalCellState = puzzle.board[rowIdx][colIdx];
     return (rowIdx, colIdx, puzzle) => {
         if (puzzle.board[rowIdx][colIdx] === originalCellState) {
-            interactWithCell(msg, rowIdx, colIdx, puzzle);
+            interaction(rowIdx, colIdx, puzzle);
         }
         return puzzle;
     }
@@ -177,12 +165,14 @@ module.exports = {
     generateSolvePuzzle: generateSolvePuzzle,
     generateEmptyPuzzle: generateEmptyPuzzle,
     generateEmptyBoard: generateEmptyBoard,
-    interactWithCell: interactWithCell,
+    fillCell: fillCell,
+    blankCell: blankCell,
+    markCell: markCell,
+    setCellState: setCellState,
     makeInteractionFunction: makeInteractionFunction,
     updateColumnCountGroup: updateColumnCountGroup,
     updateRowCountGroup: updateRowCountGroup,
     makePuzzleFrom2DArray: makePuzzleFrom2DArray,
     puzzleIsSolved: puzzleIsSolved,
     STATES: STATES,
-    MESSAGES: MESSAGES
 }

@@ -40,11 +40,13 @@ function createCell(board, rowIdx, colIdx) {
 function getCellClass(cellState) {
     switch(cellState) {
         case STATES.EMPTY:
-            return 'empty-cell'
+            return 'empty-cell';
         case STATES.FILLED:
-            return 'filled-cell'
+            return 'filled-cell';
         case STATES.BLANK:
-            return 'blank-cell'        
+            return 'blank-cell';
+        case STATES.MARKED:
+            return 'marked-cell';
     }
 }
 

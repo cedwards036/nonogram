@@ -76,6 +76,10 @@
     background-color: #B6B6B6;
 }
 
+.marked-cell {
+    background-color: rgb(255, 119, 248);
+}
+
 .modal-background {
     display: none;
     position: fixed;

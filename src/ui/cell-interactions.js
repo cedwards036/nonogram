@@ -2,7 +2,9 @@ const makeInteractionFunction = require('../puzzle.js').makeInteractionFunction;
 const updateColumnCountGroup = require('../puzzle.js').updateColumnCountGroup;
 const updateRowCountGroup = require('../puzzle.js').updateRowCountGroup;
 const puzzleIsSolved = require('../puzzle.js').puzzleIsSolved;
-const MESSAGES = require('../puzzle.js').MESSAGES
+const fillCell = require('../puzzle.js').fillCell;
+const markCell = require('../puzzle.js').markCell;
+const blankCell = require('../puzzle.js').blankCell;
 const updateCountGroupDiv = require('./render-puzzle.js').updateCountGroupDiv;
 const updateCellStateClass = require('./render-puzzle.js').updateCellStateClass
 const getCellClass = require('./render-puzzle.js').getCellClass;
@@ -62,23 +64,27 @@ function handleCreationCellClick(puzzle, cell, interactionFunction) {
 
 
 function makeCreationInteractionFunction(puzzle, cell, event) {
-    return makeCellInteractionFunction(puzzle, cell, MESSAGES.FILL);
+    return makeCellInteractionFunction(puzzle, cell, fillCell);
 }
 
 function makeSolveInteractionFunction(puzzle, cell, event) {
     if (event.button == 0) {
-        return makeCellInteractionFunction(puzzle, cell, MESSAGES.FILL);
+        if (event.shiftKey) {
+            return makeCellInteractionFunction(puzzle, cell, markCell);
+        } else {
+            return makeCellInteractionFunction(puzzle, cell, fillCell);
+        }
     } else if (event.button == 2) {
-        return makeCellInteractionFunction(puzzle, cell, MESSAGES.BLANK);
+        return makeCellInteractionFunction(puzzle, cell, blankCell);
     } else {
         return (rowIdx, colIdx, puzzle) => puzzle;
     }
 }
 
-function makeCellInteractionFunction(puzzle, cell, message) {
+function makeCellInteractionFunction(puzzle, cell, interaction) {
     const rowIdx = cell.getAttribute('rowIdx');
     const colIdx = cell.getAttribute('colIdx');
-    return makeInteractionFunction(message, rowIdx, colIdx, puzzle);
+    return makeInteractionFunction(interaction, rowIdx, colIdx, puzzle);
 }
 
 function updateColumnCountDivs(puzzle, colIdx) {
