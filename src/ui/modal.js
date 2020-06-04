@@ -18,9 +18,7 @@ function addEventListenersToCountGroups(puzzle, countGroups, openFunction) {
 }
 
 function addEventListenersToCountGroup(puzzle, countGroup, idx, openFunction) {
-    Array.from(countGroup.getElementsByClassName('count')).forEach(col => {
-        col.addEventListener('click', () => {openFunction(puzzle, countGroup, idx)});
-    });
+    countGroup.addEventListener('click', () => {openFunction(puzzle, countGroup, idx)});
 }
 
 function addModalCloseEventListener() {
