@@ -1,5 +1,6 @@
 const assert = require('assert');
 const makePuzzleFrom2DArray = require('../src/puzzle.js').makePuzzleFrom2DArray;
+const makeIncompleteCount = require('../src/puzzle.js').makeIncompleteCount;
 const STATES = require('../src/puzzle.js').STATES;
 const makePuzzleString = require('../src/puzzle-url.js').makePuzzleString;
 const parsePuzzleString = require('../src/puzzle-url.js').parsePuzzleString;
@@ -28,19 +29,43 @@ describe('makePuzzleString', () => {
 
 describe('parsePuzzleString', () => {
     it('parses the given string into an object with arrays of row counts and column counts', () => {
-        const expected = {rowCountGroups: [[2], [1], [2]], colCountGroups: [[2], [1, 1], [1]]};
+        const expected = {
+            rowCountGroups: [
+                [makeIncompleteCount(2)], 
+                [makeIncompleteCount(1)], 
+                [makeIncompleteCount(2)]
+            ], 
+            colCountGroups: [
+                [makeIncompleteCount(2)], 
+                [makeIncompleteCount(1), makeIncompleteCount(1)], 
+                [makeIncompleteCount(1)]
+            ]
+        };
         assert.deepStrictEqual(expected, parsePuzzleString('2;1;2#2;1,1;1'));
     });
 });
 
 describe('buildPuzzleFromPuzzleString', () => {
     it('creates an empty puzzle with the row and column counts indicated by the puzzle string', () => {
-        const expected = {rowCountGroups: [[2], [1], [2], [3]], colCountGroups: [[2], [1, 1], [1]], board: [
-            [STATES.EMPTY, STATES.EMPTY, STATES.EMPTY],
-            [STATES.EMPTY, STATES.EMPTY, STATES.EMPTY,],
-            [STATES.EMPTY, STATES.EMPTY, STATES.EMPTY,],
-            [STATES.EMPTY, STATES.EMPTY, STATES.EMPTY,]
-        ]};
+        const expected = {
+            rowCountGroups: [
+                [makeIncompleteCount(2)], 
+                [makeIncompleteCount(1)], 
+                [makeIncompleteCount(2)],
+                [makeIncompleteCount(3)]
+            ], 
+            colCountGroups: [
+                [makeIncompleteCount(2)], 
+                [makeIncompleteCount(1), makeIncompleteCount(1)], 
+                [makeIncompleteCount(1)]
+            ], 
+            board: [
+                [STATES.EMPTY, STATES.EMPTY, STATES.EMPTY],
+                [STATES.EMPTY, STATES.EMPTY, STATES.EMPTY,],
+                [STATES.EMPTY, STATES.EMPTY, STATES.EMPTY,],
+                [STATES.EMPTY, STATES.EMPTY, STATES.EMPTY,]
+            ]
+        };
         assert.deepStrictEqual(expected, buildPuzzleFromPuzzleString('2;1;2;3#2;1,1;1'));
     });
 });

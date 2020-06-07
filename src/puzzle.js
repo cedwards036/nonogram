@@ -13,10 +13,10 @@ function generateSolvePuzzle(rowCountGroups, colCountGroups) {
 function generateEmptyPuzzle(width, height) {
     const puzzle = {rowCountGroups: [], colCountGroups: []};
     for (let i = 0; i < height; i++) {
-        puzzle.rowCountGroups.push([0])
+        puzzle.rowCountGroups.push([makeIncompleteCount(0)])
     }
     for (let i = 0; i < width; i++) {
-        puzzle.colCountGroups.push([0])
+        puzzle.colCountGroups.push([makeIncompleteCount(0)])
     }
     puzzle.board = generateEmptyBoard(width, height);
     return puzzle;
@@ -97,13 +97,13 @@ function makeColumnCountGroup(puzzle, colIdx) {
             i++;
         }
         if (curCount > 0) {
-            columnCounts.push(curCount);
+            columnCounts.push(makeIncompleteCount(curCount));
             curCount = 0;
         }
         i++;
     }
     if (columnCounts.length === 0) {
-        return [0];
+        return [makeIncompleteCount(0)];
     } else {
         return columnCounts;
     }
@@ -124,41 +124,45 @@ function makeRowCountGroup(puzzle, rowIdx) {
             i++;
         }
         if (curCount > 0) {
-            rowCountGroups.push(curCount);
+            rowCountGroups.push(makeIncompleteCount(curCount));
             curCount = 0;
         }
         i++;
     }
     if (rowCountGroups.length === 0) {
-        return [0];
+        return [makeIncompleteCount(0)];
     } else {
         return rowCountGroups;
     }
 }
 
 function puzzleIsSolved(puzzle) {
-    const rowsAreCorrect = puzzle.rowCountGroups.reduce((result, counts, rowIdx) => {
-        return result && arrEquals(makeRowCountGroup(puzzle, rowIdx), counts);
+    const rowsAreCorrect = puzzle.rowCountGroups.reduce((result, countGroup, rowIdx) => {
+        return result && countGroupEquals(makeRowCountGroup(puzzle, rowIdx), countGroup);
     }, true);
-    const colsAreCorrect = puzzle.colCountGroups.reduce((result, counts, colIdx) => {
-        return result && arrEquals(makeColumnCountGroup(puzzle, colIdx), counts);
+    const colsAreCorrect = puzzle.colCountGroups.reduce((result, countGroup, colIdx) => {
+        return result && countGroupEquals(makeColumnCountGroup(puzzle, colIdx), countGroup);
     }, true);
     return rowsAreCorrect && colsAreCorrect;
 }
 
-function arrEquals(arr1, arr2) {
+function countGroupEquals(arr1, arr2) {
     if (!arr1 || !arr2) {
         return false;
     } else if (arr1.length != arr2.length) {
         return false;
     } else {
         for (let i = 0; i < arr1.length; i++) {
-            if (arr1[i] !== arr2[i]) {
+            if (arr1[i].value !== arr2[i].value) {
                 return false;
             }
         }
         return true;
     }
+}
+
+function makeIncompleteCount(count) {
+    return {value: count, isComplete: false};
 }
 
 module.exports = {
@@ -174,5 +178,6 @@ module.exports = {
     updateRowCountGroup: updateRowCountGroup,
     makePuzzleFrom2DArray: makePuzzleFrom2DArray,
     puzzleIsSolved: puzzleIsSolved,
+    makeIncompleteCount: makeIncompleteCount,
     STATES: STATES,
 }

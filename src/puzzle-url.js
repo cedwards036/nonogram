@@ -1,11 +1,12 @@
 const generateSolvePuzzle = require('./puzzle.js').generateSolvePuzzle;
+const makeIncompleteCount = require('../src/puzzle.js').makeIncompleteCount;
 
 function makePuzzleString(puzzle) {
     const rowCountGroups = puzzle.rowCountGroups.map((rowCountGroup) => {
-        return rowCountGroup.join(',');
+        return rowCountGroup.map(count => count.value).join(',');
     }).join(';');
     const colCountGroups = puzzle.colCountGroups.map((colCount) => {
-        return colCount.join(',');
+        return colCount.map(count => count.value).join(',');
     }).join(';');
     return rowCountGroups + '#' + colCountGroups;
 }
@@ -20,7 +21,10 @@ function decodePuzzleURLQueryString(queryString) {
 
 function parsePuzzleString(puzzleString) {
     function parseCounts(countsStr) {
-        return countsStr.split(';').map(s => s.split(',').map(s => parseInt(s)));
+        return countsStr
+            .split(';')
+            .map(s => s.split(',')
+            .map(s => makeIncompleteCount(parseInt(s))));
     }
     const split = puzzleString.split('#');
     const rowCountGroups = parseCounts(split[0]);

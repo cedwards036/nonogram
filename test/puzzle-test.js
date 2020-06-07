@@ -9,18 +9,27 @@ const updateColumnCountGroup = require('../src/puzzle.js').updateColumnCountGrou
 const updateRowCountGroup = require('../src/puzzle.js').updateRowCountGroup;
 const makePuzzleFrom2DArray = require('../src/puzzle.js').makePuzzleFrom2DArray;
 const puzzleIsSolved = require('../src/puzzle.js').puzzleIsSolved;
+const makeIncompleteCount = require('../src/puzzle.js').makeIncompleteCount;
 const STATES = require('../src/puzzle.js').STATES;
-const MESSAGES = require('../src/puzzle.js').MESSAGES;
 
 describe('generateEmptyPuzzle', () => {
     it('should create a colCountGroups array containing m 0 count nodes', () => {
         const puzzle = generateEmptyPuzzle(3, 4);
-        assert.deepEqual([[0], [0], [0]], puzzle.colCountGroups); 
+        assert.deepEqual([
+            [makeIncompleteCount(0)], 
+            [makeIncompleteCount(0)], 
+            [makeIncompleteCount(0)]
+        ], puzzle.colCountGroups); 
     });
 
     it('should create a rowCountGroups array containing n 0 count nodes', () => {
         const puzzle = generateEmptyPuzzle(3, 4);
-        assert.deepEqual([[0], [0], [0], [0]], puzzle.rowCountGroups); 
+        assert.deepEqual([
+            [makeIncompleteCount(0)], 
+            [makeIncompleteCount(0)], 
+            [makeIncompleteCount(0)],
+            [makeIncompleteCount(0)]
+        ], puzzle.rowCountGroups); 
     });
 
     it('should create an m x n puzzle board', () => {
@@ -55,14 +64,14 @@ describe('updateColumnCountGroup', () => {
 
     it('should update to 0 if nothing is filled in the line', () => {
         puzzle = updateColumnCountGroup(puzzle, 0);
-        assert.deepEqual([0], puzzle.colCountGroups[0]);
+        assert.deepEqual([makeIncompleteCount(0)], puzzle.colCountGroups[0]);
     });  
 
     it('should contain a single number when there is one contiguous filled stretch', () => {
         puzzle = fillCell(0, 0, puzzle);
         puzzle = fillCell(1, 0, puzzle);
         puzzle = updateColumnCountGroup(puzzle, 0);
-        assert.deepEqual([2], puzzle.colCountGroups[0]);
+        assert.deepEqual([makeIncompleteCount(2)], puzzle.colCountGroups[0]);
     }); 
 
     it('should contain counts of contiguous filled stretches in order', () => {
@@ -71,7 +80,11 @@ describe('updateColumnCountGroup', () => {
         puzzle = fillCell(3, 3, puzzle);
         puzzle = fillCell(5, 3, puzzle);
         puzzle = updateColumnCountGroup(puzzle, 3);
-        assert.deepEqual([1, 2, 1], puzzle.colCountGroups[3]);
+        assert.deepEqual([
+            makeIncompleteCount(1),
+            makeIncompleteCount(2),
+            makeIncompleteCount(1)
+        ], puzzle.colCountGroups[3]);
     });
 });
 
@@ -83,14 +96,14 @@ describe('updateRowCountGroup', () => {
 
     it('should update to 0 if nothing is filled in the line', () => {
         puzzle = updateRowCountGroup(puzzle, 0);
-        assert.deepEqual([0], puzzle.rowCountGroups[0]);
+        assert.deepEqual([makeIncompleteCount(0)], puzzle.rowCountGroups[0]);
     });  
 
     it('should contain a single number when there is one contiguous filled stretch', () => {
         puzzle = fillCell(0, 0, puzzle);
         puzzle = fillCell(0, 1, puzzle);
         puzzle = updateRowCountGroup(puzzle, 0);
-        assert.deepEqual([2], puzzle.rowCountGroups[0]);
+        assert.deepEqual([makeIncompleteCount(2)], puzzle.rowCountGroups[0]);
     }); 
 
     it('should contain counts of contiguous filled stretches in order', () => {
@@ -99,7 +112,11 @@ describe('updateRowCountGroup', () => {
         puzzle = fillCell(3, 3, puzzle);
         puzzle = fillCell(3, 5, puzzle);
         puzzle = updateRowCountGroup(puzzle, 3);
-        assert.deepEqual([1, 2, 1], puzzle.rowCountGroups[3]);
+        assert.deepEqual([
+            makeIncompleteCount(1),
+            makeIncompleteCount(2),
+            makeIncompleteCount(1)
+        ], puzzle.rowCountGroups[3]);
     });
 });
 
@@ -148,12 +165,18 @@ describe('generateSolvePuzzle', () => {
 
 describe('puzzleIsSolved', () => {
     it('an empty puzzle is solved if all counts are 0', () => {
-        const puzzle = generateSolvePuzzle([[0], [0]], [[0], [0]])
+        const puzzle = generateSolvePuzzle(
+            [[makeIncompleteCount(0)], [makeIncompleteCount(0)]], 
+            [[makeIncompleteCount(0)], [makeIncompleteCount(0)]]
+        )
         assert.equal(true, puzzleIsSolved(puzzle));
     });
 
     it('an empty puzzle is not solved if at least one count is not 0', () => {
-        const puzzle = generateSolvePuzzle([[0], [1]], [[0], [0]])
+        const puzzle = generateSolvePuzzle(
+            [[makeIncompleteCount(0)], [makeIncompleteCount(1)]], 
+            [[makeIncompleteCount(0)], [makeIncompleteCount(0)]]
+        )
         assert.equal(false, puzzleIsSolved(puzzle));
     });
 

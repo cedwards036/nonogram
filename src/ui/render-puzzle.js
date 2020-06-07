@@ -103,7 +103,7 @@ function clearChildren(element) {
 
 function createCountDiv(count) {
     const countDiv = document.createElement('div');
-    countDiv.textContent = count;
+    countDiv.textContent = count.value;
     countDiv.setAttribute('class', 'count');
     return countDiv;
 }
