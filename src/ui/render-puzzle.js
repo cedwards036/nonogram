@@ -1,4 +1,4 @@
-const STATES = require('../puzzle.js').STATES
+const STATES = require('../puzzle.js').STATES;
 
 function clearPuzzle() {
     clearChildren(document.getElementById('cellGrid'));
@@ -83,6 +83,18 @@ function updateCountGroupDiv(countGroupDiv, countGroup) {
     return countGroupDiv;
 }
 
+function setCountGroupDivSizes(puzzle) {
+    const height = calculateDivSizeFromNumberOfCells(puzzle.board.length);
+    const width = calculateDivSizeFromNumberOfCells(puzzle.board[0].length);
+    document.getElementById('colCountGroups').style.height = `${height}px`;
+    document.getElementById('rowCountGroups').style.width = `${width}px`;
+}
+
+function calculateDivSizeFromNumberOfCells(numOfCells) {
+    const CELL_SIZE_IN_PX = 35;
+    return Math.ceil(numOfCells / 2) * CELL_SIZE_IN_PX;
+}
+
 function clearChildren(element) {
     while (element.firstChild) {
         element.removeChild(element.lastChild);
@@ -101,6 +113,7 @@ module.exports = {
     clearPuzzle: clearPuzzle,
     renderRowCounts: renderRowCounts,
     renderColCounts: renderRowCounts,
+    setCountGroupDivSizes: setCountGroupDivSizes,
     updateCountGroupDiv: updateCountGroupDiv,
     updateCellStateClass: updateCellStateClass,
     getCellClass: getCellClass

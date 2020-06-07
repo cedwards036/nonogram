@@ -12,6 +12,7 @@ function makePuzzleDimensionsSetter(createPuzzleFunction) {
             clearPuzzle();
             createPuzzleFunction(intWidth, intHeight);
             //reassign the integer values to the input to remove any leading zeros
+            // e.g. convert '005' -> '5'
             yInput.value = intHeight;
             xInput.value = intWidth;
         } else {
