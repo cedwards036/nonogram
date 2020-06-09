@@ -1,3 +1,5 @@
+const makeIncompleteCount = require('../src/puzzle.js').makeIncompleteCount;
+
 function parseCountGroupString(countGroupString, maxSize) {
     countGroupString = removeWhitespace(countGroupString);
     if (isValidString(countGroupString)) {
@@ -6,7 +8,7 @@ function parseCountGroupString(countGroupString, maxSize) {
         if (countGroupSumIsTooBig(countGroup, maxSize)) {
             throw new InvalidInputError('Numbers are too big for their row/column');
         }
-        return countGroup;
+        return countGroup.map(makeIncompleteCount);
     } else {
         throw new InvalidInputError('Input contains invalid characters or dangling commas');
     }

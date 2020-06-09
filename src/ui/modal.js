@@ -29,7 +29,7 @@ function openRowModal(puzzle, countGroupDiv, idx) {
     modalBackground.style.display = 'block';
     const input = document.getElementById('enterCountsInput');
     input.focus();
-    input.value = puzzle.rowCountGroups[idx].join(',') 
+    input.value = puzzle.rowCountGroups[idx].map(count => count.value).join(','); 
     document.getElementById('enterCountsForm').onsubmit = () => {
         try {
             const newCounts = parseCountGroupString(input.value, puzzle.board[0].length);
