@@ -64,7 +64,11 @@ describe('buildPuzzleFromPuzzleString', () => {
                 [STATES.EMPTY, STATES.EMPTY, STATES.EMPTY,],
                 [STATES.EMPTY, STATES.EMPTY, STATES.EMPTY,],
                 [STATES.EMPTY, STATES.EMPTY, STATES.EMPTY,]
-            ]
+            ],
+            history: {
+                past: [],
+                future: []
+            }
         };
         assert.deepStrictEqual(expected, buildPuzzleFromPuzzleString('2;1;2;3#2;1,1;1'));
     });

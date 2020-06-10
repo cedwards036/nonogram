@@ -7,11 +7,25 @@ const STATES = {
 
 function generateSolvePuzzle(rowCountGroups, colCountGroups) {
     const board = generateEmptyBoard(colCountGroups.length, rowCountGroups.length);
-    return {rowCountGroups: rowCountGroups, colCountGroups: colCountGroups, board: board};
+    return {
+        rowCountGroups: rowCountGroups, 
+        colCountGroups: colCountGroups, 
+        board: board, 
+        history: {
+            past: [],
+            future: []
+        }};
 }
 
 function generateEmptyPuzzle(width, height) {
-    const puzzle = {rowCountGroups: [], colCountGroups: []};
+    const puzzle = {
+        rowCountGroups: [], 
+        colCountGroups: [],  
+        history: {
+            past: [],
+            future: []
+        }
+    };
     for (let i = 0; i < height; i++) {
         puzzle.rowCountGroups.push([makeIncompleteCount(0)])
     }

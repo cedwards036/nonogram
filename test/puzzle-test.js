@@ -154,11 +154,19 @@ describe('generateSolvePuzzle', () => {
     it('should create an empty puzzle with column counts and row counts derived from the input', () => {
         const rowCountGroups = [[1, 1], [3], [2]];
         const colCountGroups = [[0], [2], [1]];
-        const expected = {rowCountGroups: rowCountGroups, colCountGroups: colCountGroups, board: [
-            [STATES.EMPTY, STATES.EMPTY, STATES.EMPTY],
-            [STATES.EMPTY, STATES.EMPTY, STATES.EMPTY,],
-            [STATES.EMPTY, STATES.EMPTY, STATES.EMPTY,]
-        ]};
+        const expected = {
+            rowCountGroups: rowCountGroups, 
+            colCountGroups: colCountGroups, 
+            board: [
+                [STATES.EMPTY, STATES.EMPTY, STATES.EMPTY],
+                [STATES.EMPTY, STATES.EMPTY, STATES.EMPTY,],
+                [STATES.EMPTY, STATES.EMPTY, STATES.EMPTY,]
+            ],
+            history: {
+                past: [],
+                future: []
+            }
+        };
         assert.deepEqual(expected, generateSolvePuzzle(rowCountGroups, colCountGroups));
     });
 });
