@@ -29,7 +29,7 @@ function openRowModal(puzzle, countGroupDiv, idx) {
     modalBackground.style.display = 'block';
     const input = document.getElementById('enterCountsInput');
     input.focus();
-    input.value = puzzle.rowCountGroups[idx].map(count => count.value).join(','); 
+    input.value = countGroupToString(puzzle.rowCountGroups[idx]); 
     document.getElementById('enterCountsForm').onsubmit = () => {
         try {
             const newCounts = parseCountGroupString(input.value, puzzle.board[0].length);
@@ -50,7 +50,7 @@ function openColumnModal(puzzle, countGroupDiv, idx) {
     modalBackground.style.display = 'block';
     const input = document.getElementById('enterCountsInput');
     input.focus(); 
-    input.value = puzzle.colCountGroups[idx].join(',')
+    input.value = countGroupToString(puzzle.colCountGroups[idx]);
     document.getElementById('enterCountsForm').onsubmit = () => {
         try {
             const newCounts = parseCountGroupString(input.value, puzzle.board.length);
@@ -65,6 +65,10 @@ function openColumnModal(puzzle, countGroupDiv, idx) {
         }
         return false;
     }
+}
+
+function countGroupToString(countGroup) {
+    return countGroup.map(count => count.value).join(',');
 }
 
 function closeModal() {
