@@ -69,24 +69,70 @@ function makePuzzleFrom2DArray(arr) {
     return puzzle;
 }
 
-const fillCell = makeCellInteraction(STATES.FILLED);
-const blankCell = makeCellInteraction(STATES.BLANK);
-const markCell = makeCellInteraction(STATES.MARKED);
+const fillCell = makeNonUpdatingCellInteraction(STATES.FILLED);
+const blankCell = makeNonUpdatingCellInteraction(STATES.BLANK);
+const markCell = makeNonUpdatingCellInteraction(STATES.MARKED);
+const fillCellAndUpdateCounts = makeUpdatingCellInteraction(STATES.FILLED);
+const blankCellAndUpdateCounts = makeUpdatingCellInteraction(STATES.BLANK);
+const markCellAndUpdateCounts = makeUpdatingCellInteraction(STATES.MARKED);
 
-function makeCellInteraction(state) {
-    return (rowIdx, colIdx, puzzle) => setCellState(state, rowIdx, colIdx, puzzle);
+function makeNonUpdatingCellInteraction(state) {
+    return (rowIdx, colIdx, puzzle) => setCellState(state, rowIdx, colIdx, puzzle, makeSimpleCellCommand);
 }
 
-function setCellState(newState, rowIdx, colIdx, puzzle) {
-    if (puzzle.board[rowIdx][colIdx] === STATES.EMPTY) {
-        puzzle.board[rowIdx][colIdx] = newState;
-    } else {
-        puzzle.board[rowIdx][colIdx] = STATES.EMPTY;
-    }
+function makeUpdatingCellInteraction(state) {
+    return (rowIdx, colIdx, puzzle) => setCellState(state, rowIdx, colIdx, puzzle, makeCountUpdatingCellCommand);
+}
+
+function setCellState(desiredNewState, rowIdx, colIdx, puzzle, makeCellCommand) {
+    const oldState = puzzle.board[rowIdx][colIdx];
+    const newState = determineNewCellState(oldState, desiredNewState);
+    const command = makeCellCommand(newState, oldState, rowIdx, colIdx);
+    puzzle.history.past.push(command);
+    puzzle.history.future = [];
+    command.execute(puzzle);
     return puzzle;
 }
 
-function makeInteractionFunction(interaction, rowIdx, colIdx, puzzle) {
+function determineNewCellState(oldState, newState) {
+    if (oldState === STATES.EMPTY) {
+        return newState;
+    } else {
+        return STATES.EMPTY;
+    }
+}
+
+function makeSimpleCellCommand(newState, oldState, rowIdx, colIdx) {
+    return {
+        execute: puzzle => {
+            puzzle.board[rowIdx][colIdx] = newState;
+            return puzzle;
+        },
+        undo: puzzle => {
+            puzzle.board[rowIdx][colIdx] = oldState;
+            return puzzle;
+        }
+    }
+}
+
+function makeCountUpdatingCellCommand(newState, oldState, rowIdx, colIdx) {
+    return {
+        execute: puzzle => {
+            puzzle.board[rowIdx][colIdx] = newState;
+            updateColumnCountGroup(puzzle, colIdx);
+            updateRowCountGroup(puzzle, rowIdx);
+            return puzzle;
+        },
+        undo: puzzle => {
+            puzzle.board[rowIdx][colIdx] = oldState;
+            updateColumnCountGroup(puzzle, colIdx);
+            updateRowCountGroup(puzzle, rowIdx);
+            return puzzle;
+        }
+    }
+}
+
+function makeSingleContextInteraction(interaction, rowIdx, colIdx, puzzle) {
     const originalCellState = puzzle.board[rowIdx][colIdx];
     return (rowIdx, colIdx, puzzle) => {
         if (puzzle.board[rowIdx][colIdx] === originalCellState) {
@@ -179,6 +225,24 @@ function makeIncompleteCount(count) {
     return {value: count, isComplete: false};
 }
 
+function undo(puzzle) {
+    if (puzzle.history.past.length > 0) {
+        const command = puzzle.history.past.pop();
+        command.undo(puzzle);
+        puzzle.history.future.push(command);
+    }
+    return puzzle;
+}
+
+function redo(puzzle) {
+    if (puzzle.history.future.length > 0) {
+        const command = puzzle.history.future.pop();
+        command.execute(puzzle);
+        puzzle.history.past.push(command);
+    }
+    return puzzle;
+}
+
 module.exports = {
     generateSolvePuzzle: generateSolvePuzzle,
     generateEmptyPuzzle: generateEmptyPuzzle,
@@ -186,12 +250,19 @@ module.exports = {
     fillCell: fillCell,
     blankCell: blankCell,
     markCell: markCell,
+    fillCellAndUpdateCounts: fillCellAndUpdateCounts,
+    blankCellAndUpdateCounts: blankCellAndUpdateCounts,
+    markCellAndUpdateCounts: markCellAndUpdateCounts,
     setCellState: setCellState,
-    makeInteractionFunction: makeInteractionFunction,
+    makeSimpleCellCommand: makeSimpleCellCommand,
+    makeCountUpdatingCellCommand: makeCountUpdatingCellCommand,
+    makeSingleContextInteraction: makeSingleContextInteraction,
     updateColumnCountGroup: updateColumnCountGroup,
     updateRowCountGroup: updateRowCountGroup,
     makePuzzleFrom2DArray: makePuzzleFrom2DArray,
     puzzleIsSolved: puzzleIsSolved,
     makeIncompleteCount: makeIncompleteCount,
+    undo: undo,
+    redo: redo,
     STATES: STATES,
 }

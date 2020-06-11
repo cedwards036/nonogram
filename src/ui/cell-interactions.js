@@ -1,4 +1,4 @@
-const makeInteractionFunction = require('../puzzle.js').makeInteractionFunction;
+const makeSingleContextInteraction = require('../puzzle.js').makeSingleContextInteraction;
 const updateColumnCountGroup = require('../puzzle.js').updateColumnCountGroup;
 const updateRowCountGroup = require('../puzzle.js').updateRowCountGroup;
 const puzzleIsSolved = require('../puzzle.js').puzzleIsSolved;
@@ -84,7 +84,7 @@ function makeSolveInteractionFunction(puzzle, cell, event) {
 function makeCellInteractionFunction(puzzle, cell, interaction) {
     const rowIdx = cell.getAttribute('rowIdx');
     const colIdx = cell.getAttribute('colIdx');
-    return makeInteractionFunction(interaction, rowIdx, colIdx, puzzle);
+    return makeSingleContextInteraction(interaction, rowIdx, colIdx, puzzle);
 }
 
 function updateColumnCountDivs(puzzle, colIdx) {
