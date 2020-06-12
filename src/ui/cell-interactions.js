@@ -5,10 +5,27 @@ const puzzleIsSolved = require('../puzzle.js').puzzleIsSolved;
 const fillCell = require('../puzzle.js').fillCell;
 const markCell = require('../puzzle.js').markCell;
 const blankCell = require('../puzzle.js').blankCell;
+const fillCellAndUpdateCounts = require('../puzzle.js').fillCellAndUpdateCounts;
+const undo = require('../puzzle.js').undo;
+const redo = require('../puzzle.js').redo;
 const updateCountGroupDiv = require('./render-puzzle.js').updateCountGroupDiv;
 const updateCellStateClass = require('./render-puzzle.js').updateCellStateClass
 const getCellClass = require('./render-puzzle.js').getCellClass;
 const updatePuzzleURL = require('./render-puzzle-url.js').updatePuzzleURL;
+
+
+function addUndoAndRedoListeners(puzzle, puzzleUpdateFunction) {
+    document.addEventListener('keydown', (e) => {
+        if (e.ctrlKey && e.key === 'z') {
+            undo(puzzle);
+            puzzleUpdateFunction(puzzle);
+        }
+        if (e.ctrlKey && e.key === 'y') {
+            redo(puzzle);
+            puzzleUpdateFunction(puzzle);
+        }
+    });
+}
 
 function addCreationCellEventListeners(puzzle) {
     addCellEventListeners(puzzle, makeCreationInteractionFunction, handleCreationCellClick);
@@ -64,7 +81,7 @@ function handleCreationCellClick(puzzle, cell, interactionFunction) {
 
 
 function makeCreationInteractionFunction(puzzle, cell, event) {
-    return makeCellInteractionFunction(puzzle, cell, fillCell);
+    return makeCellInteractionFunction(puzzle, cell, fillCellAndUpdateCounts);
 }
 
 function makeSolveInteractionFunction(puzzle, cell, event) {
@@ -111,5 +128,6 @@ function getNthRowCountsCol(n) {
 
 module.exports = {
     addCreationCellEventListeners: addCreationCellEventListeners,
-    addSolveCellEventListeners: addSolveCellEventListeners
+    addSolveCellEventListeners: addSolveCellEventListeners,
+    addUndoAndRedoListeners: addUndoAndRedoListeners
 }

@@ -1,15 +1,49 @@
 const STATES = require('../puzzle.js').STATES;
+const updatePuzzleURL = require('./render-puzzle-url.js').updatePuzzleURL;
 
 function clearPuzzle() {
     clearChildren(document.getElementById('cellGrid'));
-    clearChildren(document.getElementById('colCountGroups'));
     clearChildren(document.getElementById('rowCountGroups'));
+    clearChildren(document.getElementById('colCountGroups'));
 }
 
 function renderPuzzle(puzzle) {
     renderCellGrid(puzzle);
     renderRowCounts(puzzle);
     renderColCounts(puzzle);
+}
+
+function updateCreatePuzzle(puzzle) {
+    updatePuzzle(puzzle);
+    updatePuzzleURL(puzzle);
+}
+
+function updateSolvePuzzle(puzzle) {
+    updatePuzzle(puzzle);
+}
+
+function updatePuzzle(puzzle) {
+    updateRowCounts(puzzle);
+    updateColCounts(puzzle);
+    updateBoard(puzzle);
+}
+
+function updateRowCounts(puzzle) {
+    clearChildren(document.getElementById('rowCountGroups'));
+    renderRowCounts(puzzle);
+}
+
+function updateColCounts(puzzle) {
+    clearChildren(document.getElementById('colCountGroups'));
+    renderColCounts(puzzle);
+}
+
+function updateBoard(puzzle) {
+    Array.from(document.getElementsByClassName('row')).forEach((row, rowIdx) => {
+        Array.from(row.getElementsByClassName('cell')).forEach((cell, colIdx) => {
+            updateCellStateClass(cell, getCellClass(puzzle.board[rowIdx][colIdx]));
+        });
+    });
 }
 
 function renderCellGrid(puzzle) {
@@ -111,6 +145,8 @@ function createCountDiv(count) {
 module.exports = {
     renderPuzzle: renderPuzzle,
     clearPuzzle: clearPuzzle,
+    updateCreatePuzzle: updateCreatePuzzle,
+    updateSolvePuzzle: updateSolvePuzzle,
     renderRowCounts: renderRowCounts,
     renderColCounts: renderRowCounts,
     setCountGroupDivSizes: setCountGroupDivSizes,
